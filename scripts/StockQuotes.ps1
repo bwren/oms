@@ -1,20 +1,14 @@
-﻿param (
-    [Parameter (Mandatory=$false)]
-    [string[]] $symbols = ('MSFT','AAPL','INTC','GOOG'),
+﻿$VerbosePreference = "Continue"
 
-    [Parameter (Mandatory=$false)]
-    [string] $customerId,
+$customerId = Get-AutomationVariable -Name 'Stocks-WorkspaceID'
+$sharedKey  = Get-AutomationVariable -Name 'Stocks-WorkspaceKey'
 
-    [Parameter (Mandatory=$true)]
-    [string] $sharedKey
-)
-
-$logType = "Stocks"
-$fields = "sl1d1t1c1ohgv"
-$uri = "http://finance.yahoo.com/d/quotes.csv?s=" + ($symbols -join '+') + "&f=$fields&e=.csv"
-
+$logType = "StockQuote"
+$fields = "sl1d1t1c1ohgvp"
+$symbols = Get-AutomationVariable -Name 'Stocks-SymbolList'
 Write-Verbose "Symbols: $symbols"
 
+$uri = "http://finance.yahoo.com/d/quotes.csv?s=" + ($symbols -join '+') + "&f=$fields&e=.csv"
 
 try {
     $response = Invoke-RestMethod -Uri $uri
@@ -26,7 +20,7 @@ Catch
     Exit
 }
 
-$header = "Symbol","LastTrade","LastTradeDate","LastTradeTime","Change","Open","DayHigh","DayLow","Volume"
+$header = "Symbol","LastTrade","LastTradeDate","LastTradeTime","Change","Open","DayHigh","DayLow","Volume","PreviousClose"
 
 try {
     $quotes = ConvertFrom-Csv -InputObject $response -Header $header
@@ -49,7 +43,10 @@ foreach ($quote in $quotes)
         DayHigh = [Single]$quote.DayHigh
         DayLow = [Single]$quote.DayLow
         Volume = [Single]$quote.Volume
-        LastTradeDateTime = (Get-Date -Date ($quote.LastTradeDate + ' ' + $quote.LastTradeTime)).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+        PreviousClose = [Single]$quote.PreviousClose
+        LastTradeDate = [String]$quote.LastTradeDate
+        LastTradeTime = [String]$quote.LastTradeTime
+        LastTradeDateTime = ((Get-Date -Date ($quote.LastTradeDate + ' ' + $quote.LastTradeTime)).AddHours(5)).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
     }
 
     Write-Verbose "Quote: $d"
@@ -62,7 +59,7 @@ $body = ConvertTo-Json  $data
 Write-Verbose "Body: $body"
 
 try {
-    #Send-OMSAPIIngestionFile -customerId $customerId -sharedKey $sharedKey -body $body -logType $logType -TimeStampField LastTradeDateTime 
+    Send-OMSAPIIngestionFile -customerId $customerId -sharedKey $sharedKey -body $body -logType $logType -TimeStampField LastTradeDateTime 
 }
 Catch
 {

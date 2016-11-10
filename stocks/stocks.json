@@ -35,11 +35,9 @@
 
         "StockCollectionRunbookName": "Stocks-GetQuotes",
         "StockCollectionRunbookDescription": "Gets quote for one or more stock symbols."
-        "StockCollectionRunbookUri":  ""
+        "StockCollectionRunbookUri":  "https://github.com/bwren/oms/blob/master/scripts/StockQuotes.ps1"
 
     },
-    < soft
-    knock at
     "resources": [
         {
             "name": "[concat(variables('SolutionName'), '[' ,parameters('workspacename'), ']')]",

@@ -19,6 +19,12 @@
         },
         "pricingTier": {
             "value": "Free"
+        },
+        "symbols": { 
+            "value": "MSFT,AAPL,INTC"
+        },
+        "startTime": { 
+            "value": "2016-11-12T06:30:00-07:00"
         }
     }
 }

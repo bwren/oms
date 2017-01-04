@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-            "value": "bwren-msn-lab-02"
+            "value": "MyWorkspace"
         },
         "accountName": {
-            "value": "bwren-msn-lab-02"
+            "value": "MyAccount"
         },
         "workspaceregionId": {
             "value": "East US"
@@ -21,10 +21,22 @@
             "value": "Free"
         },
         "symbols": { 
-            "value": "MSFT,AAPL,INTC"
+            "value": "MSFT,AAPL,GOOGL,AMZN,INTC,CSCO"
         },
-        "startTime": { 
-            "value": "2016-11-12T06:30:00-07:00"
+        "startTimeCollection": {
+          "value": "2017-01-04T06:30:00-08:00"
+        },
+        "startTimeCollectionTimeZone": {
+          "value": "America/Los_Angeles"
+        },
+        "startDay": {
+          "value": "2017-01-04T06:30:00-08:00"
+        },
+        "startDayCollectionTimeZone": {
+          "value": "America/Los_Angeles"
+        },
+        "alertRecipients": {
+          "value": "bwren@microsoft.com"
         }
     }
 }

@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-            "value": "MyWorkspace"
+          "value": "MyWorkspace"
         },
         "accountName": {
             "value": "MyAccount"
@@ -32,7 +32,13 @@
         "startDay": {
           "value": "2017-01-04T06:30:00-08:00"
         },
-        "startDayCollectionTimeZone": {
+      "startDayCollectionTimeZone": {
+        "value": "America/Los_Angeles"
+      },
+        "endDay": {
+          "value": "2017-01-04T13:30:00-08:00"
+        },
+        "endDayCollectionTimeZone": {
           "value": "America/Los_Angeles"
         },
         "alertRecipients": {

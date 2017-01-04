@@ -51,12 +51,24 @@
             }
         },
         "startDay": {
-            "type": "string",
+          "type": "string",
           "metadata": {
             "description": "Time that the market opens.  The stock collection script will be enabled at this time every day.  This time must be at least 5 minutes from the current time.  Typically set this for the market open time tomorrow."
           }
         },
         "startDayCollectionTimeZone": {
+          "type":  "string",
+            "metadata": {
+              "description":  "Time zone of the start of day time"
+            }
+        },
+        "endDay": {
+          "type": "string",
+          "metadata": {
+            "description": "Time that the market closes.  The stock collection script will be disabled at this time every day.  This time must be at least 5 minutes from the current time.  Typically set this for the market open time tomorrow."
+          }
+        },
+        "endDayCollectionTimeZone": {
           "type":  "string",
             "metadata": {
               "description":  "Time zone of the start of day time"
@@ -81,10 +93,17 @@
             "control": "guid"
           }
         },
-        "scheduleLinkGuidScheduleCollection": {
+        "scheduleLinkGuidEnableCollection": {
           "type": "string",
           "metadata": {
-            "description": "GUID for the schedule link for schedule control.",
+            "description": "GUID for the schedule link to enable collection.",
+            "control": "guid"
+          }
+        },
+        "scheduleLinkGuidDisableCollection": {
+          "type": "string",
+          "metadata": {
+            "description": "GUID for the schedule link to disable collection.",
             "control": "guid"
           }   
         }
@@ -140,7 +159,7 @@
         "Name": "Stocks-CollectionSchedule",
         "Description": "Schedule for stock quote collection script",
         "StartTime": "[parameters('startTimeCollection')]",
-        "TimeZone": "America/Los_Angeles",
+        "TimeZone": "[parameters('startTimeCollectionTimeZone')]",
         "IsEnabled": "true",
         "Interval": "1",
         "Frequency": "hour",
@@ -154,14 +173,25 @@
         "Description": "Enables and disables stock collection schedule so we don't collect when market is closed.",
         "Uri": "https://raw.githubusercontent.com/bwren/oms/master/stocks/EnableDisableSchedule.ps1"
       },
-      "Schedule": {
+      "ScheduleEnable": {
         "Name": "Stocks-ScheduleControl-StartDay",
         "Description": "Enable stock collection at start of day",
         "StartTime": "[parameters('startDay')]",
+        "TimeZone": "[parameters('startDayCollectionTimeZone')]",
         "IsEnabled": "true",
         "Interval": "1",
         "Frequency": "day",
-        "LinkGuid": "[parameters('scheduleLinkGuidScheduleCollection')]"
+        "LinkGuid": "[parameters('scheduleLinkGuidEnableCollection')]"
+      },
+      "ScheduleDisable": {
+        "Name": "Stocks-ScheduleControl-EndDay",
+        "Description": "Disable stock collection at end of day",
+        "StartTime": "[parameters('endDay')]",
+        "TimeZone": "[parameters('endDayCollectionTimeZone')]",
+        "IsEnabled": "true",
+        "Interval": "1",
+        "Frequency": "day",
+        "LinkGuid": "[parameters('scheduleLinkGuidDisableCollection')]"
       }
     },
 
@@ -205,8 +235,10 @@
         "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('StockCollection').Schedule.Name)]",
         "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('StockCollection').Schedule.LinkGuid)]",
         "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('accountName'), variables('ScheduleControl').Runbook.Name)]",
-        "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').Schedule.Name)]",
-        "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').Schedule.LinkGuid)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').ScheduleEnable.Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').ScheduleEnable.LinkGuid)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').ScheduleDisable.Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').ScheduleDisable.LinkGuid)]",
         "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('AutomationAccountVariable').Name)]",
         "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('AutomationResourceGroupVariable').Name)]",
         "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('WorkspaceIdVariable').Name)]",
@@ -227,8 +259,10 @@
           "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('StockCollection').Schedule.Name)]",
           "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('StockCollection').Schedule.LinkGuid)]",
           "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('accountName'), variables('ScheduleControl').Runbook.Name)]",
-          "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').Schedule.Name)]",
-          "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').Schedule.LinkGuid)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').ScheduleEnable.Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').ScheduleEnable.LinkGuid)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').ScheduleDisable.Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').ScheduleDisable.LinkGuid)]",
           "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('AutomationAccountVariable').Name)]",
           "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('AutomationResourceGroupVariable').Name)]",
           "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('WorkspaceIdVariable').Name)]",
@@ -336,42 +370,82 @@
       }
     },
     {
-      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').Schedule.Name)]",
+      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').ScheduleEnable.Name)]",
       "type": "microsoft.automation/automationAccounts/schedules",
       "apiVersion": "[variables('AutomationApiVersion')]",
       "tags": { },
       "dependsOn": [
       ],
       "properties": {
-        "description": "[variables('ScheduleControl').Schedule.Description]",
-        "startTime": "[variables('ScheduleControl').Schedule.StartTime]",
-        "timeZone": "[variables('StockCollection').Schedule.TimeZone]",
-        "isEnabled": "[variables('ScheduleControl').Schedule.IsEnabled]",
-        "interval": "[variables('ScheduleControl').Schedule.Interval]",
-        "frequency": "[variables('ScheduleControl').Schedule.Frequency]"
+        "description": "[variables('ScheduleControl').ScheduleEnable.Description]",
+        "startTime": "[variables('ScheduleControl').ScheduleEnable.StartTime]",
+        "timeZone": "[variables('ScheduleControl').ScheduleEnable.TimeZone]",
+        "isEnabled": "[variables('ScheduleControl').ScheduleEnable.IsEnabled]",
+        "interval": "[variables('ScheduleControl').ScheduleEnable.Interval]",
+        "frequency": "[variables('ScheduleControl').ScheduleEnable.Frequency]"
       }
     },
     {
-      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').Schedule.LinkGuid)]",
+      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').ScheduleEnable.LinkGuid)]",
       "type": "microsoft.automation/automationAccounts/jobSchedules",
       "apiVersion": "[variables('AutomationApiVersion')]",
       "location": "[parameters('regionId')]",
       "dependsOn": [
         "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'),  '/runbooks/', variables('ScheduleControl').Runbook.Name)]",
-        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'), '/schedules/', variables('ScheduleControl').Schedule.Name)]"
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'), '/schedules/', variables('ScheduleControl').ScheduleEnable.Name)]"
       ],
       "tags": {
       },
       "properties": {
         "schedule": {
-          "name": "[variables('ScheduleControl').Schedule.Name]"
+          "name": "[variables('ScheduleControl').ScheduleEnable.Name]"
         },
         "runbook": {
           "name": "[variables('ScheduleControl').Runbook.Name]"
         },
         "parameters": {
           "enabled": "true",
-          "scheduleName": "[variables('ScheduleControl').Schedule.Name]"
+          "scheduleName": "[variables('StockCollection').Schedule.Name]"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').ScheduleDisable.Name)]",
+      "type": "microsoft.automation/automationAccounts/schedules",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "tags": { },
+      "dependsOn": [
+      ],
+      "properties": {
+        "description": "[variables('ScheduleControl').ScheduleDisable.Description]",
+        "startTime": "[variables('ScheduleControl').ScheduleDisable.StartTime]",
+        "timeZone": "[variables('ScheduleControl').ScheduleDisable.TimeZone]",
+        "isEnabled": "[variables('ScheduleControl').ScheduleDisable.IsEnabled]",
+        "interval": "[variables('ScheduleControl').ScheduleDisable.Interval]",
+        "frequency": "[variables('ScheduleControl').ScheduleDisable.Frequency]"
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').ScheduleDisable.LinkGuid)]",
+      "type": "microsoft.automation/automationAccounts/jobSchedules",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "location": "[parameters('regionId')]",
+      "dependsOn": [
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'),  '/runbooks/', variables('ScheduleControl').Runbook.Name)]",
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'), '/schedules/', variables('ScheduleControl').ScheduleDisable.Name)]"
+      ],
+      "tags": {
+      },
+      "properties": {
+        "schedule": {
+          "name": "[variables('ScheduleControl').ScheduleDisable.Name]"
+        },
+        "runbook": {
+          "name": "[variables('ScheduleControl').Runbook.Name]"
+        },
+        "parameters": {
+          "enabled": "false",
+          "scheduleName": "[variables('StockCollection').Schedule.Name]"
         }
       }
     },

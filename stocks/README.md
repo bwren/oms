@@ -33,6 +33,11 @@ Absolutely!  This is very much a work in progress.  In addition to adding to the
 ## How do I ask questions?
 Please send me mail if you have any questions, comments, or suggestions.  My goal is to provide whatever information you need to solve your business problems with OMS so I'm always interested to here your requirements and requests.
 
+## Known issues
+
+- (1/5/17) There's a runbook that enables and disables the schedule to collect stock quotes at the start and end of the day.  It can't disable the schedule though because edits to the schedule are locked by the containment relationship with the solution.  Need an alternate strategy for the functionality to turn off collection when the market's closed (to save useless runbook processing).
+
+
 
 Brian Wren<br>
 bwren@microsoft.com<br>

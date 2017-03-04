@@ -1,4 +1,4 @@
-﻿{
+﻿ {
     "$schema": "http://schemas.microsoft.org/azure/deploymentTemplate?api-version=2015-01-01#",
     "contentVersion": "1.0",
     "parameters": {
@@ -211,8 +211,10 @@
       "Severity": "PercentChangeAlert",
       "ScheduleInterval": 60,
       "TimeSpan": 60,
-      "ThresholdOperator": "gt",
-      "ThresholdValue": 0,
+      "Threshold": {
+        "Operator": "gt",
+        "Value": 0
+      },
       "Subject": "Stock change alert"
     },
 
@@ -552,7 +554,7 @@
       "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
       "apiVersion": "[variables('LogAnalyticsApiVersion')]",
       "dependsOn": [
-        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('PercentChangeSearch').ID, '/schedules/', variables('PercentChangeAlert').ScheduleID)]"
+        
       ],
       "properties": {
         "etag": "*",
@@ -561,8 +563,8 @@
         "Description": "[variables('PercentChangeAlert').Description]",
         "Severity": "[variables('PercentChangeAlert').Severity]",
         "Threshold": {
-          "Operator": "[variables('PercentChangeAlert').ThresholdOperator]",
-          "Value": "[variables('PercentChangeAlert').ThresholdValue]"
+          "Operator": "[variables('PercentChangeAlert').Threshold.Operator]",
+          "Value": "[variables('PercentChangeAlert').Threshold.Value]"
         },
         "EmailNotification": {
           "Recipients": [

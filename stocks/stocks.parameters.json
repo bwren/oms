@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-          "value": "MyWorkspace"
+          "value": "bwren-msn-lab-58"
         },
         "accountName": {
-            "value": "MyAccount"
+          "value": "bwren-msn-lab-58"
         },
         "workspaceregionId": {
             "value": "East US"
@@ -24,19 +24,19 @@
             "value": "MSFT,AAPL,GOOGL,AMZN,INTC,CSCO"
         },
         "startTimeCollection": {
-          "value": "2017-01-04T06:30:00-08:00"
+          "value": "2017-01-31T06:30:00-08:00"
         },
         "startTimeCollectionTimeZone": {
           "value": "America/Los_Angeles"
         },
         "startDay": {
-          "value": "2017-01-04T06:30:00-08:00"
+          "value": "2017-01-31T06:30:00-08:00"
         },
       "startDayCollectionTimeZone": {
         "value": "America/Los_Angeles"
       },
         "endDay": {
-          "value": "2017-01-04T13:30:00-08:00"
+          "value": "2017-01-31T13:30:00-08:00"
         },
         "endDayCollectionTimeZone": {
           "value": "America/Los_Angeles"

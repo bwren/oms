@@ -73,9 +73,6 @@
     "Recipients": {
       "type": "string"
     },
-    "Remediation": {
-      "type": "string"
-    },
     "Notification": {
       "type": "string",
       "allowedValues": [
@@ -87,6 +84,9 @@
     "WebhookUri": {
       "type": "string",
       "defaultValue": "http://pattontechapi.patton-tech.com/webhook"
+    },
+    "Remediation": {
+      "type": "string"
     }
   },
   "variables": {

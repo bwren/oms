@@ -122,10 +122,10 @@
         "Value": "[parameters('Value')]"
       },
       "Webhook": {
-        "type": "WebhookBad",
-        "name": "[concat(parameters('id'),'-','webhook')]",
-        "webhookUri": "[parameters('WebhookUri')]",
-        "customPayload": "[variables('CustomPayload')]"
+        "Type": "Webhook",
+        "Name": "[concat(parameters('id'),'-','webhook')]",
+        "WebhookUri": "[parameters('WebhookUri')]",
+        "CustomPayload": "[variables('CustomPayload')]"
       }
     },
 
@@ -197,9 +197,9 @@
       ],
       "properties": {
         "etag": "*",
-        "type": "[variables('PattonTechAlert').Webhook.type]",
-        "name": "[concat(variables('PattonTechAlert').SavedSearch.Name,'|',variables('PattonTechAlert').Schedule.Name,'|',variables('PattonTechAlert').Webhook.Name)]",
-        "webhookUri": "[variables('PattonTechAlert').Webhook.webhookUri]",
+        "type": "[variables('PattonTechAlert').Webhook.Type]",
+        "name": "[variables('PattonTechAlert').Webhook.Name]",
+        "webhookUri": "[variables('PattonTechAlert').Webhook.WebhookUri]",
         "customPayload": "[variables('PattonTechAlert').Webhook.CustomPayLoad]"
       }
     }

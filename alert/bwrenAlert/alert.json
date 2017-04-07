@@ -73,6 +73,9 @@
     "Recipients": {
       "type": "string"
     },
+    "Remediation": {
+      "type": "string"
+    },
     "Notification": {
       "type": "string",
       "allowedValues": [
@@ -129,7 +132,8 @@
 
     "SavedSearchName": "[concat(parameters('WorkspaceName'),'/',variables('PattonTechAlert').SavedSearch.Name)]",
     "ScheduleName": "[concat(variables('SavedSearchName'),'/',variables('PattonTechAlert').Schedule.Name)]",
-    "AlertName": "[concat(variables('ScheduleName'),'/',variables('PattonTechAlert').Action.Name)]"
+    "AlertName": "[concat(variables('ScheduleName'),'/',variables('PattonTechAlert').Action.Name)]",
+    "WebhookName": "[concat(variables('ScheduleName'),'/,',variables('PattonTechAlert').Webhook.Name)]"
   },
   "resources": [
     {

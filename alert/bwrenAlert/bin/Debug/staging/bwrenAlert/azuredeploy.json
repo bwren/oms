@@ -40,6 +40,9 @@
           "Description": {
             "value": "This monitor triggers an alert when Azure has reported service health issue; which is recorded in the Activity Log"
           },
+          "Remediation": {
+            "value": "http://wiki.patton-tech.com/oms/malwaresignaturesoutofdate"
+          },
           "Query": {
             "value": "Type=AzureActivity (Category=ServiceHealth)"
           },

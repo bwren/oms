@@ -5,162 +5,47 @@
     "WorkspaceName": {
       "type": "string"
     },
-    "id": {
+    "artifactsLocation": {
       "type": "string"
-    },
-    "SearchType": {
-      "type": "string",
-      "allowedValues": [
-        "Malware",
-        "SQL",
-        "IIS",
-        "DFS",
-        "DS",
-        "DNS",
-        "Azure",
-        "OMS",
-        "Backup",
-        "ServiceHealth",
-        "OS"
-      ],
-      "defaultValue": "OS"
-    },
-    "DisplayName": {
-      "type": "string"
-    },
-    "Query": {
-      "type": "string"
-    },
-    "Interval": {
-      "type": "int",
-      "defaultValue": 5
-    },
-    "TimeSpan": {
-      "type": "int",
-      "defaultValue": 5
-    },
-    "Enabled": {
-      "type": "bool",
-      "defaultValue": true
-    },
-    "Severity": {
-      "type": "string",
-      "allowedValues": [
-        "Critical",
-        "Warning",
-        "Informational"
-      ],
-      "defaultValue": "Critical"
-    },
-    "Description": {
-      "type": "string"
-    },
-    "Operator": {
-      "type": "string",
-      "allowedValues": [
-        "gt",
-        "lt"
-      ],
-      "defaultValue": "gt"
-    },
-    "Value": {
-      "type": "int",
-      "defaultValue": 0
-    },
-    "Subject": {
-      "type": "string"
-    },
-    "Recipients": {
-      "type":  "string"
     }
   },
   "variables": {
-    "LogAnalyticsApiVersion": "2015-11-01-preview",
-
-    "Category": "[concat('PattonTech',' ',parameters('SearchType'))]",
-
-    "PattonTechAlert": {
-      "SavedSearch": {
-        "Name": "[parameters('id')]",
-        "category": "[concat(variables('Category'),' ','SavedSearch')]",
-        "displayName": "[parameters('DisplayName')]",
-        "query": "[parameters('Query')]"
-      },
-      "Schedule": {
-        "Name": "[concat(parameters('id'),'-','schedule')]",
-        "enabled": "[parameters('Enabled')]",
-        "interval": "[parameters('Interval')]",
-        "queryTimeSpan": "[parameters('TimeSpan')]"
-      },
-      "Action": {
-        "Type": "Alert",
-        "Name": "[concat(parameters('id'),'-','alert')]",
-        "DisplayName": "[parameters('DisplayName')]",
-        "Description": "[parameters('Description')]",
-        "Severity": "[parameters('Severity')]",
-        "Subject": "[parameters('Subject')]",
-        "Recipients": "[parameters('Recipients')]"
-      },
-      "Threshold": {
-        "Operator": "[parameters('Operator')]",
-        "Value": "[parameters('Value')]"
-      }
-    },
-
-      "SavedSearchName": "[concat(parameters('WorkspaceName'),'/',variables('PattonTechAlert').SavedSearch.Name)]",
-      "ScheduleName": "[concat(variables('SavedSearchName'),'/',variables('PattonTechAlert').Schedule.Name)]",
-      "AlertName": "[concat(variables('ScheduleName'),'/',variables('PattonTechAlert').Action.Name)]"
-    },
+    "AlertTemplate": "alert.json"
+  },
   "resources": [
     {
-      "name": "[variables('SavedSearchName')]",
-      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
-      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "name": "PattonTechServiceHealth",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
       "dependsOn": [ ],
-      "tags": { },
       "properties": {
-        "etag": "*",
-        "query": "[variables('PattonTechAlert').SavedSearch.query]",
-        "displayName": "[variables('PattonTechAlert').SavedSearch.displayName]",
-        "category": "[variables('PattonTechAlert').SavedSearch.category]"
-      }
-    },
-    {
-      "name": "[variables('ScheduleName')]",
-      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/",
-      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
-      "dependsOn": [
-        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name)]"
-      ],
-      "properties": {
-        "etag": "*",
-        "interval": "[variables('PattonTechAlert').Schedule.interval]",
-        "queryTimeSpan": "[variables('PattonTechAlert').Schedule.queryTimeSpan]",
-        "enabled": "[variables('PattonTechAlert').Schedule.enabled]"
-      }
-    },
-    {
-      "name": "[variables('AlertName')]",
-      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
-      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
-      "dependsOn": [
-        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name,'/schedules/',variables('PattonTechAlert').Schedule.Name)]"
-      ],
-      "properties": {
-        "etag": "*",
-        "Type": "Alert",
-        "Name": "[variables('PattonTechAlert').Action.Name]",
-        "Description": "[variables('PattonTechAlert').Action.Description]",
-        "Severity": "[variables('PattonTechAlert').Action.Severity]",
-        "Threshold": {
-          "Operator": "[variables('PattonTechAlert').Threshold.Operator]",
-          "Value": "[variables('PattonTechAlert').Threshold.Value]"
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('artifactsLocation'), '/', variables('AlertTemplate'))]",
+          "contentVersion": "1.0.0.0"
         },
-        "EmailNotification": {
-          "Recipients": [
-            "[variables('PattonTechAlert').Action.Recipients]"
-          ],
-          "Subject": "[variables('PattonTechAlert').Action.Subject]"
+        "parameters": {
+          "WorkspaceName": {
+            "value": "[parameters('workspaceName')]"
+          },
+          "id": {
+            "value": "servicehealth"
+          },
+          "SearchType": {
+            "Value": "ServiceHealth"
+          },
+          "DisplayName": {
+            "value": "Azure Service Health Event"
+          },
+          "Description": {
+            "value": "This monitor triggers an alert when Azure has reported service health issue; which is recorded in the Activity Log"
+          },
+          "Query": {
+            "value": "Type=AzureActivity (Category=ServiceHealth)"
+          },
+          "Notification": {
+            "value": "notify"
+          }
         }
       }
     }

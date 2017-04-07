@@ -72,6 +72,18 @@
     },
     "Recipients": {
       "type": "string"
+    },
+    "Notification": {
+      "type": "string",
+      "allowedValues": [
+        "public",
+        "notify"
+      ],
+      "defaultValue": "public"
+    },
+    "WebhookUri": {
+      "type": "string",
+      "defaultValue": "http://pattontechapi.patton-tech.com/webhook"
     }
   },
   "variables": {
@@ -104,8 +116,16 @@
       "Threshold": {
         "Operator": "[parameters('Operator')]",
         "Value": "[parameters('Value')]"
+      },
+      "Webhook": {
+        "type": "WebHook",
+        "name": "[concat(parameters('id'),'-','webhook')]",
+        "webhookUri": "[parameters('WebhookUri')]",
+        "customPayload": "[variables('CustomPayload')]"
       }
     },
+
+    "CustomPayload": "[concat('{\"workspaceId\":\"#workspaceid\",\n\"alertName\":\"#alertrulename\",\n\"alertValue\":\"#thresholdvalue\",\n\"searchInterval\":\"#searchinterval\",\n\"IncludeSearchResults\":true,\n\"Remediation\":\"',parameters('Remediation'),'\",\n\"Description\":\"#description\",\n\"SearchQuery\":\"#searchquery\",\n\"LinkToSearchResults\":\"#linktosearchresults\",\n\"NotificationType\":\"', parameters('Notification'),'\"}')]",
 
     "SavedSearchName": "[concat(parameters('WorkspaceName'),'/',variables('PattonTechAlert').SavedSearch.Name)]",
     "ScheduleName": "[concat(variables('SavedSearchName'),'/',variables('PattonTechAlert').Schedule.Name)]",
@@ -162,6 +182,22 @@
           ],
           "Subject": "[variables('PattonTechAlert').Action.Subject]"
         }
+      }
+    },
+    {
+      "name": "[variables('WebhookName')]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions/",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name,'/schedules/',variables('PattonTechAlert').Schedule.Name)]",
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name,'/schedules/',variables('PattonTechAlert').Schedule.Name,'/actions/',variables('PattonTechAlert').Action.Name)]"
+      ],
+      "properties": {
+        "etag": "*",
+        "type": "[variables('PattonTechAlert').Webhook.type]",
+        "name": "[concat(variables('PattonTechAlert').SavedSearch.Name,'|',variables('PattonTechAlert').Schedule.Name,'|',variables('PattonTechAlert').Webhook.Name)]",
+        "webhookUri": "[variables('PattonTechAlert').Webhook.webhookUri]",
+        "customPayload": "[variables('PattonTechAlert').Webhook.CustomPayLoad]"
       }
     }
   ],

@@ -186,6 +186,22 @@
           "Subject": "[variables('PattonTechAlert').Action.Subject]"
         }
       }
+    },
+    {
+      "name": "[variables('WebhookName')]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions/",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name,'/schedules/',variables('PattonTechAlert').Schedule.Name)]",
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name,'/schedules/',variables('PattonTechAlert').Schedule.Name,'/actions/',variables('PattonTechAlert').Action.Name)]"
+      ],
+      "properties": {
+        "etag": "*",
+        "type": "[variables('PattonTechAlert').Webhook.type]",
+        "name": "[concat(variables('PattonTechAlert').SavedSearch.Name,'|',variables('PattonTechAlert').Schedule.Name,'|',variables('PattonTechAlert').Webhook.Name)]",
+        "webhookUri": "[variables('PattonTechAlert').Webhook.webhookUri]",
+        "customPayload": "[variables('PattonTechAlert').Webhook.CustomPayLoad]"
+      }
     }
   ],
   "outputs": { }

@@ -43,8 +43,11 @@
           "Query": {
             "value": "Type=AzureActivity (Category=ServiceHealth)"
           },
-          "Notification": {
-            "value": "notify"
+          "Subject": {
+            "value": "Alert was raised"
+          },
+          "Recipients": {
+            "value": "bwren@microsoft.com"
           }
         }
       }

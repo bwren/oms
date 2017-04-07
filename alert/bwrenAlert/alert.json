@@ -148,7 +148,7 @@
       ],
       "properties": {
         "etag": "*",
-        "Type": "Alert",
+        "Type": "[variables('PattonTechAlert').Action.Type]",
         "Name": "[variables('PattonTechAlert').Action.Name]",
         "Description": "[variables('PattonTechAlert').Action.Description]",
         "Severity": "[variables('PattonTechAlert').Action.Severity]",

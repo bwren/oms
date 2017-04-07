@@ -4,10 +4,14 @@
   "parameters": {
     "WorkspaceName": {
       "type": "string"
+    },
+    "artifactsLocation": {
+      "type": "string"
     }
   },
   "variables": {
-    },
+    "AlertTemplate": "alert.json"
+  },
   "resources": [
     {
       "name": "PattonTechServiceHealth",

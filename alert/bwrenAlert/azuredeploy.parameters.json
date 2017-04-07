@@ -5,15 +5,18 @@
     "workspaceName": {
       "value": "bwren-rackspace-09"
     },
-      "id": {
-          "value": "bwren"
-      },
-      "DisplayName": {
-          "value": "bwren - alerts"
-      },
-      "Query": {
-          "value": "Type=Event"
-      },
+    "artifactsLocation": {
+      "value": "https://raw.githubusercontent.com/bwren/oms/master/alert/bwrenAlert"
+    },
+    "id": {
+      "value": "bwren"
+    },
+    "DisplayName": {
+      "value": "bwren - alerts"
+    },
+    "Query": {
+      "value": "Type=Event"
+    },
     "Description": {
       "value": "bwren test alert"
     },
@@ -21,7 +24,7 @@
       "value": "Alert created"
     },
     "Recipients": {
-      "value":  "bwren@microsoft.com"
+      "value": "bwren@microsoft.com"
     }
   }
 }

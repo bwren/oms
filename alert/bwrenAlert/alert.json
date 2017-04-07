@@ -197,7 +197,7 @@
       ],
       "properties": {
         "etag": "*",
-        "type": "[variables('PattonTechAlert').Webhook.Type]",
+        "type": "[variables('PattonTechAlert').Webhook.Type1]",
         "name": "[variables('PattonTechAlert').Webhook.Name]",
         "webhookUri": "[variables('PattonTechAlert').Webhook.WebhookUri]",
         "customPayload": "[variables('PattonTechAlert').Webhook.CustomPayLoad]"

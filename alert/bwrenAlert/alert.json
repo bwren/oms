@@ -93,6 +93,7 @@
     "LogAnalyticsApiVersion": "2015-11-01-preview",
 
     "Category": "[concat('PattonTech',' ',parameters('SearchType'))]",
+    "CustomPayload": "",
 
     "PattonTechAlert": {
       "SavedSearch": {

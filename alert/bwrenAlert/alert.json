@@ -119,6 +119,12 @@
       "Threshold": {
         "Operator": "[parameters('Operator')]",
         "Value": "[parameters('Value')]"
+      },
+      "Webhook": {
+        "type": "WebHook",
+        "name": "[concat(parameters('id'),'-','webhook')]",
+        "webhookUri": "[parameters('WebhookUri')]",
+        "customPayload": "[variables('CustomPayload')]"
       }
     },
 

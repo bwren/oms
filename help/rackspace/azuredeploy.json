@@ -1,0 +1,130 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "A valid Log Analytics workspace name"
+      }
+    },
+    "artifactsLocation": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "SolutionName": "OMSRackspaceSolution",
+    "SolutionVersion": "1.0",
+    "SolutionPublisher": "PattonTech",
+    "ProductName": "PattonTechOMS",
+    "AlertTemplate": "alert.json",
+    "LogAnalyticsApiVersion": "2015-11-01-preview"
+  },
+  "resources": [
+    {
+      "name": "[concat(variables('SolutionName'), '[ ' ,parameters('workspacename'), ' ]')]",
+      "location": "[resourceGroup().location]",
+      "tags": { },
+      "type": "Microsoft.OperationsManagement/solutions",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [ ],
+      "properties": {
+        "workspaceResourceId": "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+        "referencedResources": [ ],
+        "containedResources": [
+          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/pattontechmalwaresignatures')]",
+          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/pattontechservicehealth')]"
+        ]
+      },
+      "plan": {
+        "name": "[concat(variables('SolutionName'), '[' ,parameters('workspacename'), ']')]",
+        "Version": "[variables('SolutionVersion')]",
+        "product": "[variables('SolutionName')]",
+        "publisher": "[variables('SolutionPublisher')]",
+        "promotionCode": ""
+      }
+    },
+    {
+      "name": "PattonTechMalwareSignatures",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('artifactsLocation'), '/', variables('AlertTemplate'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "WorkspaceName": {
+            "value": "[parameters('workspaceName')]"
+          },
+          "id": {
+            "value": "malwaresignatures"
+          },
+          "SearchType": {
+            "Value": "Malware"
+          },
+          "DisplayName": {
+            "value": "Malware - Signatures Out of Date"
+          },
+          "Description": {
+            "value": "This monitor triggers an alert when the microsoft antimalware agent (SCEP) signatures become out of date"
+          },
+          "Remediation": {
+            "value": "http://wiki.patton-tech.com/oms/malwaresignaturesoutofdate"
+          },
+          "Query": {
+            "value": "Type=ProtectionStatus AND (ProtectionStatusRank=250) AND (TypeofProtection=\"System Center Endpoint Protection\")"
+          },
+          "Interval": {
+            "value": 240
+          },
+          "TimeSpan": {
+            "value": 240
+          }
+        }
+      }
+    },
+    {
+      "name": "PattonTechServiceHealth",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('artifactsLocation'), '/', variables('AlertTemplate'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "WorkspaceName": {
+            "value": "[parameters('workspaceName')]"
+          },
+          "id": {
+            "value": "servicehealth"
+          },
+          "SearchType": {
+            "Value": "ServiceHealth"
+          },
+          "DisplayName": {
+            "value": "Azure Service Health Event"
+          },
+          "Description": {
+            "value": "This monitor triggers an alert when Azure has reported service health issue; which is recorded in the Activity Log"
+          },
+          "Remediation": {
+            "value": "http://wiki.patton-tech.com/oms/ServiceHealth"
+          },
+          "Query": {
+            "value": "Type=AzureActivity (Category=ServiceHealth)"
+          },
+          "Notification": {
+            "value": "notify"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": { }
+}

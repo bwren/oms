@@ -153,7 +153,7 @@
       "Runbook": {
         "Name": "Stocks-CollectQuotes",
         "Description": "Gets quote for one or more stock symbols.",
-        "Uri": "https://raw.githubusercontent.com/bwren/oms/master/stocks/StockQuotes.ps1"
+        "Uri": "https://raw.githubusercontent.com/bwren/oms/master/stocks/1.1/StockQuotes.ps1"
       },
       "Schedule": {
         "Name": "Stocks-CollectionSchedule",
@@ -171,7 +171,7 @@
       "Runbook": {
         "Name": "Stocks-EnableDisableSchedule",
         "Description": "Enables and disables stock collection schedule so we don't collect when market is closed.",
-        "Uri": "https://raw.githubusercontent.com/bwren/oms/master/stocks/EnableDisableSchedule.ps1"
+        "Uri": "https://raw.githubusercontent.com/bwren/oms/master/stocks/1.1/EnableDisableSchedule.ps1"
       },
       "ScheduleEnable": {
         "Name": "Stocks-ScheduleControl-StartDay",

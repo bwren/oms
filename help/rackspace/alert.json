@@ -1,0 +1,191 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "WorkspaceName": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "SearchType": {
+      "type": "string",
+      "allowedValues": [
+        "Malware",
+        "SQL",
+        "IIS",
+        "DFS",
+        "DS",
+        "DNS",
+        "Azure",
+        "OMS",
+        "Backup",
+        "ServiceHealth",
+        "OS"
+      ],
+      "defaultValue": "OS"
+    },
+    "DisplayName": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "string"
+    },
+    "Remediation": {
+      "type": "string"
+    },
+    "Query": {
+      "type": "string"
+    },
+    "Severity": {
+      "type": "string",
+      "allowedValues": [
+        "Critical",
+        "Warning",
+        "Informational"
+      ],
+      "defaultValue": "Critical"
+    },
+    "Interval": {
+      "type": "int",
+      "defaultValue": 5
+    },
+    "TimeSpan": {
+      "type": "int",
+      "defaultValue": 5
+    },
+    "Enabled": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "Operator": {
+      "type": "string",
+      "allowedValues": [
+        "gt",
+        "lt"
+      ],
+      "defaultValue": "gt"
+    },
+    "Value": {
+      "type": "int",
+      "defaultValue": 0
+    },
+    "Notification": {
+      "type": "string",
+      "allowedValues": [
+        "public",
+        "notify"
+      ],
+      "defaultValue": "public"
+    },
+    "WebhookUri": {
+      "type": "string",
+      "defaultValue": "http://pattontechapi.patton-tech.com/webhook"
+    }
+  },
+  "variables": {
+    "LogAnalyticsApiVersion": "2015-11-01-preview",
+    "CustomPayload": "[concat('{\"workspaceId\":\"#workspaceid\",\n\"alertName\":\"#alertrulename\",\n\"alertValue\":\"#thresholdvalue\",\n\"searchInterval\":\"#searchinterval\",\n\"IncludeSearchResults\":true,\n\"Remediation\":\"',parameters('Remediation'),'\",\n\"Description\":\"#description\",\n\"SearchQuery\":\"#searchquery\",\n\"LinkToSearchResults\":\"#linktosearchresults\",\n\"NotificationType\":\"', parameters('Notification'),'\"}')]",
+    "Category": "[concat('PattonTech',' ',parameters('SearchType'))]",
+    "PattonTechAlert": {
+      "SavedSearch": {
+        "Name": "[parameters('id')]",
+        "category": "[concat(variables('Category'),' ','SavedSearch')]",
+        "displayName": "[parameters('DisplayName')]",
+        "query": "[parameters('Query')]"
+      },
+      "Schedule": {
+        "Name": "[concat(parameters('id'),'-','schedule')]",
+        "enabled": "[parameters('Enabled')]",
+        "interval": "[parameters('Interval')]",
+        "queryTimeSpan": "[parameters('TimeSpan')]"
+      },
+      "Action": {
+        "Type": "Alert",
+        "Name": "[concat(parameters('id'),'-','alert')]",
+        "DisplayName": "[parameters('DisplayName')]",
+        "Description": "[parameters('Description')]",
+        "Severity": "[parameters('Severity')]"
+      },
+      "Threshold": {
+        "Operator": "[parameters('Operator')]",
+        "Value": "[parameters('Value')]"
+      },
+      "Webhook": {
+        "type": "WebHook",
+        "name": "[concat(parameters('id'),'-','webhook')]",
+        "webhookUri": "[parameters('WebhookUri')]",
+        "customPayload": "[variables('CustomPayload')]"
+      }
+    },
+    "SavedSearchName": "[concat(parameters('WorkspaceName'),'/',variables('PattonTechAlert').SavedSearch.Name)]",
+    "ScheduleName": "[concat(variables('SavedSearchName'),'/',variables('PattonTechAlert').Schedule.Name)]",
+    "AlertName": "[concat(variables('ScheduleName'),'/',variables('PattonTechAlert').Action.Name)]",
+    "WebhookName": "[concat(variables('ScheduleName'),'/',variables('PattonTechAlert').Webhook.Name)]"
+  },
+  "resources": [
+    {
+      "name": "[variables('SavedSearchName')]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [ ],
+      "tags": { },
+      "properties": {
+        "etag": "*",
+        "query": "[variables('PattonTechAlert').SavedSearch.query]",
+        "displayName": "[variables('PattonTechAlert').SavedSearch.displayName]",
+        "category": "[variables('PattonTechAlert').SavedSearch.category]"
+      }
+    },
+    {
+      "name": "[variables('ScheduleName')]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name)]"
+      ],
+      "properties": {
+        "etag": "*",
+        "interval": "[variables('PattonTechAlert').Schedule.interval]",
+        "queryTimeSpan": "[variables('PattonTechAlert').Schedule.queryTimeSpan]",
+        "enabled": "[variables('PattonTechAlert').Schedule.enabled]"
+      }
+    },
+    {
+      "name": "[variables('AlertName')]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions/",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name,'/schedules/',variables('PattonTechAlert').Schedule.Name)]"
+      ],
+      "properties": {
+        "etag": "*",
+        "type": "[variables('PattonTechAlert').Action.Type]",
+        "name": "[concat(variables('PattonTechAlert').SavedSearch.Name,'|',variables('PattonTechAlert').Schedule.Name,'|',variables('PattonTechAlert').Action.Name)]",
+        "description": "[variables('PattonTechAlert').Action.Description]",
+        "severity": "[variables('PattonTechAlert').Action.Severity]",
+        "threshold": {
+          "operator": "[variables('PattonTechAlert').Threshold.Operator]",
+          "value": "[variables('PattonTechAlert').Threshold.Value]"
+        },
+      }
+    },
+    {
+      "name": "[variables('WebhookName')]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions/",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name,'/schedules/',variables('PattonTechAlert').Schedule.Name)]",
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name,'/schedules/',variables('PattonTechAlert').Schedule.Name,'/actions/',variables('PattonTechAlert').Action.Name)]"
+      ],
+      "properties": {
+        "etag": "*",
+        "type": "[variables('PattonTechAlert').Webhook.type]",
+        "name": "[concat(variables('PattonTechAlert').SavedSearch.Name,'|',variables('PattonTechAlert').Schedule.Name,'|',variables('PattonTechAlert').Webhook.Name)]",
+        "webhookUri": "[variables('PattonTechAlert').Webhook.webhookUri]",
+        "customPayload": "[variables('PattonTechAlert').Webhook.CustomPayLoad]"
+      }
+    }
+  ],
+  "outputs": { }
+}

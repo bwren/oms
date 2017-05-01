@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "value": "19ed14f3-d70a-4ad1-89bf-606bc0a9a18d"
+        },
+        "artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/jeffpatton1971/CustomOMSSolution/master/CustomOMSSolution"
+        }
+    }
+}

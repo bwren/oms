@@ -1,0 +1,48 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+          "value": "bwren"
+        },
+        "accountName": {
+          "value": "bwrenoms"
+        },
+        "workspaceregionId": {
+            "value": "East US"
+        },
+        "regionId": {
+            "value": "East US 2"
+        },
+        "solutionName": {
+            "value": "Stocks"
+        },
+        "pricingTier": {
+            "value": "Free"
+        },
+        "symbols": { 
+            "value": "MSFT,AAPL,GOOGL,AMZN,INTC,CSCO"
+        },
+        "startTimeCollection": {
+          "value": "2017-05-01T06:30:00-08:00"
+        },
+        "startTimeCollectionTimeZone": {
+          "value": "America/Los_Angeles"
+        },
+        "startDay": {
+          "value": "2017-05-01T06:30:00-08:00"
+        },
+      "startDayCollectionTimeZone": {
+        "value": "America/Los_Angeles"
+      },
+        "endDay": {
+          "value": "2017-05-01T13:30:00-08:00"
+        },
+        "endDayCollectionTimeZone": {
+          "value": "America/Los_Angeles"
+        },
+        "alertRecipients": {
+          "value": "bwren@microsoft.com"
+        }
+    }
+}

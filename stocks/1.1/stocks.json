@@ -1,0 +1,745 @@
+﻿ {
+    "$schema": "http://schemas.microsoft.org/azure/deploymentTemplate?api-version=2015-01-01#",
+    "contentVersion": "1.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+              "Description": "Name of Log Analytics workspace"
+            }
+        },
+        "accountName": {
+            "type": "string",
+            "metadata": {
+              "Description": "Name of Automation account"
+            }
+        },
+        "workspaceregionId": {
+            "type": "string",
+            "metadata": {
+              "Description": "Region of Log Analytics workspace"
+            }
+        },
+        "regionId": {
+            "type": "string",
+            "metadata": {
+              "Description": "Region of Automation account"
+            }
+        },
+        "solutionName": {
+            "type": "string",
+            "metadata": {
+              "Description": "Name of solution"
+            }
+        },
+        "pricingTier": {
+            "type": "string",
+            "metadata": {
+              "Description": "Pricing tier of both Log Analytics workspace and Azure Automation account"
+            }
+        },
+        "startTimeCollection": {
+            "type": "string",
+            "metadata": {
+              "description": "Date and time to start stock quote collection. The schedule will start from this time and run every hour by default.  This time must be at least 5 minutes from the current time."
+            }
+        },
+        "startTimeCollectionTimeZone": {
+            "type": "string",
+            "metadata": {
+              "description":  "Time zone of the start time"
+            }
+        },
+        "startDay": {
+          "type": "string",
+          "metadata": {
+            "description": "Time that the market opens.  The stock collection script will be enabled at this time every day.  This time must be at least 5 minutes from the current time.  Typically set this for the market open time tomorrow."
+          }
+        },
+        "startDayCollectionTimeZone": {
+          "type":  "string",
+            "metadata": {
+              "description":  "Time zone of the start of day time"
+            }
+        },
+        "endDay": {
+          "type": "string",
+          "metadata": {
+            "description": "Time that the market closes.  The stock collection script will be disabled at this time every day.  This time must be at least 5 minutes from the current time.  Typically set this for the market open time tomorrow."
+          }
+        },
+        "endDayCollectionTimeZone": {
+          "type":  "string",
+            "metadata": {
+              "description":  "Time zone of the start of day time"
+            }
+        },
+        "symbols": {
+          "type": "string",
+            "metadata": {
+              "description":  "Comma delimited list of stock symbols to collect"
+            }
+        },
+        "alertRecipients": {
+          "type": "string",
+            "metadata": {
+              "description":  "Comma delimited list of email recipients to receive alerts"
+            }
+        },
+        "scheduleLinkGuidCollection": {
+          "type": "string",
+          "metadata": {
+            "description": "GUID for the schedule link for stock collection.",
+            "control": "guid"
+          }
+        },
+        "scheduleLinkGuidEnableCollection": {
+          "type": "string",
+          "metadata": {
+            "description": "GUID for the schedule link to enable collection.",
+            "control": "guid"
+          }
+        },
+        "scheduleLinkGuidDisableCollection": {
+          "type": "string",
+          "metadata": {
+            "description": "GUID for the schedule link to disable collection.",
+            "control": "guid"
+          }   
+        }
+    },
+
+  "variables": {
+    "SolutionName": "Stocks",
+    "SolutionVersion": "1.1",
+    "SolutionPublisher": "mpauthor",
+    "ProductName": "StocksSolution",
+
+    "LogAnalyticsApiVersion": "2015-11-01-preview",
+    "AutomationApiVersion": "2015-10-31",
+
+    "OMSIngestionModule": {
+      "Name": "OMSIngestionAPI",
+      "Uri": "https://devopsgallerystorage.blob.core.windows.net/packages/omsingestionapi.1.3.0.nupkg"
+    },
+
+    "AutomationAccountVariable": {
+      "Name": "Stocks-AutomationAccount",
+      "Description": "Stocks-AutomationAccount",
+      "Type": "string"
+    },
+    "AutomationResourceGroupVariable": {
+      "Name": "Stocks-ResourceGroup",
+      "Description": "Stocks-ResourceGroup",
+      "Type": "string"
+    },
+    "WorkspaceIdVariable": {
+      "Name": "Stocks-WorkspaceId",
+      "Description": "Stocks-WorkspaceId",
+      "Type": "string"
+    },
+    "WorkspaceKeyVariable": {
+      "Name": "Stocks-WorkspaceKey",
+      "Description": "Stocks-WorkspaceKey",
+      "Type": "string"
+    },
+    "SymbolsVariable": {
+      "Name": "Stocks-SymbolList",
+      "Description": "Comma delimited list of stock symbols",
+      "Type": "string"
+    },
+
+    "StockCollection": {
+      "Runbook": {
+        "Name": "Stocks-CollectQuotes",
+        "Description": "Gets quote for one or more stock symbols.",
+        "Uri": "https://raw.githubusercontent.com/bwren/oms/master/stocks/StockQuotes.ps1"
+      },
+      "Schedule": {
+        "Name": "Stocks-CollectionSchedule",
+        "Description": "Schedule for stock quote collection script",
+        "StartTime": "[parameters('startTimeCollection')]",
+        "TimeZone": "[parameters('startTimeCollectionTimeZone')]",
+        "IsEnabled": "true",
+        "Interval": "1",
+        "Frequency": "hour",
+        "LinkGuid": "[parameters('scheduleLinkGuidCollection')]"
+      }
+    },
+
+    "ScheduleControl": {
+      "Runbook": {
+        "Name": "Stocks-EnableDisableSchedule",
+        "Description": "Enables and disables stock collection schedule so we don't collect when market is closed.",
+        "Uri": "https://raw.githubusercontent.com/bwren/oms/master/stocks/EnableDisableSchedule.ps1"
+      },
+      "ScheduleEnable": {
+        "Name": "Stocks-ScheduleControl-StartDay",
+        "Description": "Enable stock collection at start of day",
+        "StartTime": "[parameters('startDay')]",
+        "TimeZone": "[parameters('startDayCollectionTimeZone')]",
+        "IsEnabled": "true",
+        "Interval": "1",
+        "Frequency": "day",
+        "LinkGuid": "[parameters('scheduleLinkGuidEnableCollection')]"
+      },
+      "ScheduleDisable": {
+        "Name": "Stocks-ScheduleControl-EndDay",
+        "Description": "Disable stock collection at end of day",
+        "StartTime": "[parameters('endDay')]",
+        "TimeZone": "[parameters('endDayCollectionTimeZone')]",
+        "IsEnabled": "true",
+        "Interval": "1",
+        "Frequency": "day",
+        "LinkGuid": "[parameters('scheduleLinkGuidDisableCollection')]"
+      }
+    },
+
+    "SearchCategory": "Stocks",
+
+    "PercentChangeSearch": {
+      "DisplayName": "Big percent price change",
+      "Query": "Type=StockQuote_CL  ChangePercent_d > 1 OR ChangePercent_d < -1 TimeGenerated>NOW-1HOUR",
+      "ID": "[toLower(concat(variables('SearchCategory'), '| Big percent price change'))]"
+    },
+
+    "PercentChangeAlert": {
+      "ID": "[toLower(concat('percentchangealert-',uniqueString(resourceGroup().id, deployment().name)))]",
+      "ScheduleID": "[toLower(concat('percentchangeschedule-',uniqueString(resourceGroup().id, deployment().name)))]",
+      "Name": "Stock change alert",
+      "Description": "Alerts when a stock moves over 5 percent.",
+      "Severity": "PercentChangeAlert",
+      "ScheduleInterval": 60,
+      "TimeSpan": 60,
+      "Threshold": {
+        "Operator": "gt",
+        "Value": 0
+      },
+      "Subject": "Stock change alert"
+    },
+
+    "View": {
+      "Author": "Brian Wren",
+      "Description": "View providing graphs and lists of stock quotes.",
+      "Name": "Stocks"
+    }
+  },
+  "resources": [
+    {
+      "name": "[concat(variables('SolutionName'), '[' ,parameters('workspacename'), ']')]",
+      "location": "[parameters('workspaceRegionId')]",
+      "tags": { },
+      "type": "Microsoft.OperationsManagement/solutions",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('accountName'), variables('OMSIngestionModule').Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('accountName'), variables('StockCollection').Runbook.Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('StockCollection').Schedule.Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('StockCollection').Schedule.LinkGuid)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('accountName'), variables('ScheduleControl').Runbook.Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').ScheduleEnable.Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').ScheduleEnable.LinkGuid)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').ScheduleDisable.Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').ScheduleDisable.LinkGuid)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('AutomationAccountVariable').Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('AutomationResourceGroupVariable').Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('WorkspaceIdVariable').Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('WorkspaceKeyVariable').Name)]",
+        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('SymbolsVariable').Name)]",
+        "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspacename'), '/savedSearches/', variables('PercentChangeSearch').ID)]",
+        "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspacename'), '/savedSearches/', variables('PercentChangeSearch').ID, '/schedules/', variables('PercentChangeAlert').ScheduleID)]",
+        "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspacename'), '/savedSearches/', variables('PercentChangeSearch').ID, '/schedules/', variables('PercentChangeAlert').ScheduleID, '/Actions/', variables('PercentChangeAlert').ID)]",
+        "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspacename'), '/views/', variables('View').Name)]"
+      ],
+      "properties": {
+        "workspaceResourceId": "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+        "referencedResources": [
+          "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('accountName'), variables('OMSIngestionModule').Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('StockCollection').Schedule.Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('StockCollection').Schedule.LinkGuid)]"
+        ],
+        "containedResources": [
+          "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('accountName'), variables('StockCollection').Runbook.Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('accountName'), variables('ScheduleControl').Runbook.Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').ScheduleEnable.Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').ScheduleEnable.LinkGuid)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('accountName'), variables('ScheduleControl').ScheduleDisable.Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/jobSchedules/', parameters('accountName'), variables('ScheduleControl').ScheduleDisable.LinkGuid)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('AutomationAccountVariable').Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('AutomationResourceGroupVariable').Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('WorkspaceIdVariable').Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('WorkspaceKeyVariable').Name)]",
+          "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('accountName'), variables('SymbolsVariable').Name)]",
+          "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspacename'), '/savedSearches/', variables('PercentChangeSearch').ID)]",
+          "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspacename'), '/savedSearches/', variables('PercentChangeSearch').ID, '/schedules/', variables('PercentChangeAlert').ScheduleID)]",
+          "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspacename'), '/savedSearches/', variables('PercentChangeSearch').ID, '/schedules/', variables('PercentChangeAlert').ScheduleID, '/Actions/', variables('PercentChangeAlert').ID)]",
+          "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspacename'), '/views/', variables('View').Name)]"
+        ]
+      },
+      "plan": {
+        "name": "[concat(variables('SolutionName'), '[' ,parameters('workspaceName'), ']')]",
+        "Version": "[variables('SolutionVersion')]",
+        "product": "[variables('ProductName')]",
+        "publisher": "[variables('SolutionPublisher')]",
+        "promotionCode": ""
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('OMSIngestionModule').Name)]",
+      "type": "Microsoft.Automation/automationAccounts/modules",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "contentLink": {
+          "uri": "[variables('OMSIngestionModule').Uri]"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('StockCollection').Runbook.Name)]",
+      "type": "Microsoft.Automation/automationAccounts/runbooks",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('accountName'), variables('OMSIngestionModule').Name)]"
+      ],
+      "location": "[parameters('regionId')]",
+      "tags": { },
+      "properties": {
+        "runbookType": "PowerShell",
+        "logProgress": "true",
+        "logVerbose": "true",
+        "description": "[variables('StockCollection').Runbook.Description]",
+        "publishContentLink": {
+          "uri": "[variables('StockCollection').Runbook.Uri]",
+          "version": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('StockCollection').Schedule.Name)]",
+      "type": "microsoft.automation/automationAccounts/schedules",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "tags": { },
+      "dependsOn": [
+      ],
+      "properties": {
+        "description": "[variables('StockCollection').Schedule.Description]",
+        "startTime": "[variables('StockCollection').Schedule.StartTime]",
+        "timeZone": "[variables('StockCollection').Schedule.TimeZone]",
+        "isEnabled": "[variables('StockCollection').Schedule.IsEnabled]",
+        "interval": "[variables('StockCollection').Schedule.Interval]",
+        "frequency": "[variables('StockCollection').Schedule.Frequency]"
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('StockCollection').Schedule.LinkGuid)]",
+      "type": "microsoft.automation/automationAccounts/jobSchedules",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "location": "[parameters('regionId')]",
+      "dependsOn": [
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'),  '/runbooks/', variables('StockCollection').Runbook.Name)]",
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'), '/schedules/', variables('StockCollection').Schedule.Name)]"
+      ],
+      "tags": {
+      },
+      "properties": {
+        "schedule": {
+          "name": "[variables('StockCollection').Schedule.Name]"
+        },
+        "runbook": {
+          "name": "[variables('StockCollection').Runbook.Name]"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').Runbook.Name)]",
+      "type": "Microsoft.Automation/automationAccounts/runbooks",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "dependsOn": [
+      ],
+      "location": "[parameters('regionId')]",
+      "tags": { },
+      "properties": {
+        "runbookType": "PowerShell",
+        "logProgress": "true",
+        "logVerbose": "true",
+        "description": "[variables('ScheduleControl').Runbook.Description]",
+        "publishContentLink": {
+          "uri": "[variables('ScheduleControl').Runbook.Uri]",
+          "version": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').ScheduleEnable.Name)]",
+      "type": "microsoft.automation/automationAccounts/schedules",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "tags": { },
+      "dependsOn": [
+      ],
+      "properties": {
+        "description": "[variables('ScheduleControl').ScheduleEnable.Description]",
+        "startTime": "[variables('ScheduleControl').ScheduleEnable.StartTime]",
+        "timeZone": "[variables('ScheduleControl').ScheduleEnable.TimeZone]",
+        "isEnabled": "[variables('ScheduleControl').ScheduleEnable.IsEnabled]",
+        "interval": "[variables('ScheduleControl').ScheduleEnable.Interval]",
+        "frequency": "[variables('ScheduleControl').ScheduleEnable.Frequency]"
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').ScheduleEnable.LinkGuid)]",
+      "type": "microsoft.automation/automationAccounts/jobSchedules",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "location": "[parameters('regionId')]",
+      "dependsOn": [
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'),  '/runbooks/', variables('ScheduleControl').Runbook.Name)]",
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'), '/schedules/', variables('ScheduleControl').ScheduleEnable.Name)]"
+      ],
+      "tags": {
+      },
+      "properties": {
+        "schedule": {
+          "name": "[variables('ScheduleControl').ScheduleEnable.Name]"
+        },
+        "runbook": {
+          "name": "[variables('ScheduleControl').Runbook.Name]"
+        },
+        "parameters": {
+          "enabled": "true",
+          "scheduleName": "[variables('StockCollection').Schedule.Name]"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').ScheduleDisable.Name)]",
+      "type": "microsoft.automation/automationAccounts/schedules",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "tags": { },
+      "dependsOn": [
+      ],
+      "properties": {
+        "description": "[variables('ScheduleControl').ScheduleDisable.Description]",
+        "startTime": "[variables('ScheduleControl').ScheduleDisable.StartTime]",
+        "timeZone": "[variables('ScheduleControl').ScheduleDisable.TimeZone]",
+        "isEnabled": "[variables('ScheduleControl').ScheduleDisable.IsEnabled]",
+        "interval": "[variables('ScheduleControl').ScheduleDisable.Interval]",
+        "frequency": "[variables('ScheduleControl').ScheduleDisable.Frequency]"
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('ScheduleControl').ScheduleDisable.LinkGuid)]",
+      "type": "microsoft.automation/automationAccounts/jobSchedules",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "location": "[parameters('regionId')]",
+      "dependsOn": [
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'),  '/runbooks/', variables('ScheduleControl').Runbook.Name)]",
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('accountName'), '/schedules/', variables('ScheduleControl').ScheduleDisable.Name)]"
+      ],
+      "tags": {
+      },
+      "properties": {
+        "schedule": {
+          "name": "[variables('ScheduleControl').ScheduleDisable.Name]"
+        },
+        "runbook": {
+          "name": "[variables('ScheduleControl').Runbook.Name]"
+        },
+        "parameters": {
+          "enabled": "false",
+          "scheduleName": "[variables('StockCollection').Schedule.Name]"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('AutomationAccountVariable').Name) ]",
+      "type": "microsoft.automation/automationAccounts/variables",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "dependsOn": [
+      ],
+      "tags": { },
+      "properties": {
+        "description": "[variables('AutomationAccountVariable').Description]",
+        "isEncrypted": 0,
+        "type": "[variables('AutomationAccountVariable').Type]",
+        "value": "[concat('\"', parameters('accountName'),'\"')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('AutomationResourceGroupVariable').Name) ]",
+      "type": "microsoft.automation/automationAccounts/variables",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "dependsOn": [
+      ],
+      "tags": { },
+      "properties": {
+        "description": "[variables('AutomationResourceGroupVariable').Description]",
+        "isEncrypted": 0,
+        "type": "[variables('AutomationResourceGroupVariable').Type]",
+        "value": "[concat('\"', resourceGroup().name, '\"')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('WorkspaceIdVariable').Name) ]",
+      "type": "microsoft.automation/automationAccounts/variables",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "dependsOn": [
+      ],
+      "tags": { },
+      "properties": {
+        "description": "[variables('WorkspaceIdVariable').Description]",
+        "isEncrypted": 0,
+        "type": "[variables('WorkspaceIdVariable').Type]",
+        "value": "[concat('\"',reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), variables('LogAnalyticsApiVersion')).customerId,'\"')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('WorkspaceKeyVariable').Name) ]",
+      "type": "microsoft.automation/automationAccounts/variables",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "dependsOn": [
+      ],
+      "tags": { },
+      "properties": {
+        "description": "[variables('WorkspaceKeyVariable').Description]",
+        "isEncrypted": 1,
+        "type": "[variables('WorkspaceKeyVariable').Type]",
+        "value": "[concat('\"',listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), variables('LogAnalyticsApiVersion')).primarySharedKey,'\"')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('accountName'), '/', variables('SymbolsVariable').Name) ]",
+      "type": "microsoft.automation/automationAccounts/variables",
+      "apiVersion": "[variables('AutomationApiVersion')]",
+      "dependsOn": [
+      ],
+      "tags": { },
+      "properties": {
+        "description": "[variables('SymbolsVariable').Description]",
+        "isEncrypted": 0,
+        "type": "[variables('SymbolsVariable').Type]",
+        "value": "[concat('\"',parameters('symbols'),'\"')]"
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "name": "[concat(parameters('workspaceName'), '/', variables('PercentChangeSearch').ID)]",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+      ],
+      "tags": { },
+      "properties": {
+        "etag": "*",
+        "query": "[variables('PercentChangeSearch').Query]",
+        "displayName": "[variables('PercentChangeSearch').DisplayName]",
+        "category": "[variables('SearchCategory')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('workspaceName'), '/', variables('PercentChangeSearch').ID, '/', variables('PercentChangeAlert').ScheduleID)]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('PercentChangeSearch').ID)]"
+      ],
+      "properties": {
+        "etag": "*",
+        "Interval": "[variables('PercentChangeAlert').ScheduleInterval]",
+        "QueryTimeSpan": "[variables('PercentChangeAlert').TimeSpan]",
+        "enabled": true
+      }
+    },
+    {
+      "name": "[concat(parameters('workspaceName'), '/', variables('PercentChangeSearch').ID, '/', variables('PercentChangeAlert').ScheduleID, '/', variables('PercentChangeAlert').ID)]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+        
+      ],
+      "properties": {
+        "etag": "*",
+        "Type": "Alert",
+        "Name": "[variables('PercentChangeAlert').Name]",
+        "Description": "[variables('PercentChangeAlert').Description]",
+        "Severity": "[variables('PercentChangeAlert').Severity]",
+        "Threshold": {
+          "Operator": "[variables('PercentChangeAlert').Threshold.Operator]",
+          "Value": "[variables('PercentChangeAlert').Threshold.Value]"
+        },
+        "EmailNotification": {
+          "Recipients": [
+            "[parameters('alertRecipients')]"
+          ],
+          "Subject": "[variables('PercentChangeAlert').Subject]"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('workspaceName'), '/', variables('View').Name)]",
+      "type": "Microsoft.OperationalInsights/workspaces/views",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "location": "[parameters('workspaceregionId')]",
+      "id": "[Concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'),'/views/', variables('View').Name)]",
+      "dependson": [
+      ],
+      "properties": {
+        "Id": "[variables('View').Name]",
+        "Name": "[variables('View').Name]",
+        "DisplayName": "[variables('View').Name]",
+        "Description": "",
+        "Author": "[variables('View').Author]",
+        "Source": "Local",
+        "Dashboard": [
+          {
+            "Id": "LineChartBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "Activity over previous 7 days",
+                "newGroup": false,
+                "icon": "",
+                "useIcon": false
+              },
+              "Header": {
+                "Title": "Percent change",
+                "Subtitle": ""
+              },
+              "LineChart": {
+                "Query": "Type=StockQuote_CL | measure max(ChangePercent_d) by Symbol_s | display linechart",
+                "yAxis": {
+                  "isLogarithmic": false,
+                  "units": {
+                    "baseUnitType": "",
+                    "baseUnit": "",
+                    "displayUnit": ""
+                  },
+                  "customLabel": ""
+                }
+              },
+              "List": {
+                "Query": "Type=StockQuote_CL TimeGenerated>NOW-7DAYS | measure max(LastTrade_d) by Symbol_s ",
+                "HideGraph": true,
+                "enableSparklines": false,
+                "operation": "Summary",
+                "ColumnsTitle": {
+                  "Name": "Type",
+                  "Value": "Max Price"
+                },
+                "Color": "#0072c6",
+                "thresholds": {
+                  "isEnabled": false,
+                  "values": [
+                    {
+                      "name": "Normal",
+                      "threshold": "Default",
+                      "color": "#009e49",
+                      "isDefault": true
+                    },
+                    {
+                      "name": "Warning",
+                      "threshold": "60",
+                      "color": "#fcd116",
+                      "isDefault": false
+                    },
+                    {
+                      "name": "Error",
+                      "threshold": "90",
+                      "color": "#ba141a",
+                      "isDefault": false
+                    }
+                  ]
+                },
+                "NameDSVSeparator": "",
+                "NavigationQuery": "{selected item}"
+              }
+            }
+          },
+          {
+            "Id": "LineChartBuilderBlade",
+            "Type": "Blade",
+            "Version": 0,
+            "Configuration": {
+              "General": {
+                "title": "Today's activity",
+                "newGroup": false,
+                "icon": "",
+                "useIcon": false
+              },
+              "Header": {
+                "Title": "Intraday activity",
+                "Subtitle": ""
+              },
+              "LineChart": {
+                "Query": "Type=StockQuote_CL TimeGenerated>NOW-8HOURS | measure max(ChangePercent_d) by Symbol_s | display linechart",
+                "yAxis": {
+                  "isLogarithmic": false,
+                  "units": {
+                    "baseUnitType": "",
+                    "baseUnit": "",
+                    "displayUnit": ""
+                  },
+                  "customLabel": ""
+                }
+              },
+              "List": {
+                "Query": "Type=StockQuote_CL TimeGenerated>NOW-8HOURS | measure max(LastTrade_d) by Symbol_s interval 1HOUR",
+                "HideGraph": false,
+                "enableSparklines": true,
+                "operation": "Last Sample",
+                "ColumnsTitle": {
+                  "Name": "Symbol",
+                  "Value": "Max Price"
+                },
+                "Color": "#0072c6",
+                "thresholds": {
+                  "isEnabled": false,
+                  "values": [
+                    {
+                      "name": "Normal",
+                      "threshold": "Default",
+                      "color": "#009e49",
+                      "isDefault": true
+                    },
+                    {
+                      "name": "Warning",
+                      "threshold": "60",
+                      "color": "#fcd116",
+                      "isDefault": false
+                    },
+                    {
+                      "name": "Error",
+                      "threshold": "90",
+                      "color": "#ba141a",
+                      "isDefault": false
+                    }
+                  ]
+                },
+                "NameDSVSeparator": "",
+                "NavigationQuery": "{selected item}"
+              }
+            }
+          }
+        ],
+        "OverviewTile": {
+          "Id": "SingleNumberBuilderTile",
+          "Type": "OverviewTile",
+          "Version": 0,
+          "Configuration": {
+            "Tile": {
+              "Legend": "Number of symbols tracked",
+              "Query": "Type=StockQuote_CL | measure countdistinct(Symbol_s) by Symbol_s"
+            },
+            "Advanced": {
+              "DataFlowVerification": {
+                "Enabled": false,
+                "Query": "*",
+                "Message": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

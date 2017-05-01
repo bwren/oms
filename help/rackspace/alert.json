@@ -150,7 +150,26 @@
         "queryTimeSpan": "[variables('PattonTechAlert').Schedule.queryTimeSpan]",
         "enabled": "[variables('PattonTechAlert').Schedule.enabled]"
       }
-    }
+    },
+    {
+      "name": "[variables('AlertName')]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions/",
+      "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('WorkspaceName'), '/savedSearches/', variables('PattonTechAlert').SavedSearch.Name,'/schedules/',variables('PattonTechAlert').Schedule.Name)]"
+      ],
+      "properties": {
+        "etag": "*",
+        "type": "[variables('PattonTechAlert').Action.Type]",
+        "name": "[concat(variables('PattonTechAlert').SavedSearch.Name,'|',variables('PattonTechAlert').Schedule.Name,'|',variables('PattonTechAlert').Action.Name)]",
+        "description": "[variables('PattonTechAlert').Action.Description]",
+        "severity": "[variables('PattonTechAlert').Action.Severity]",
+        "threshold": {
+          "operator": "[variables('PattonTechAlert').Threshold.Operator]",
+          "value": "[variables('PattonTechAlert').Threshold.Value]"
+        },
+      }
+    },
   ],
   "outputs": { }
 }

@@ -28,15 +28,13 @@
       "type": "Microsoft.OperationsManagement/solutions",
       "apiVersion": "[variables('LogAnalyticsApiVersion')]",
       "dependsOn": [
-          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/pattontechmalwaresignatures')]",
-          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/pattontechservicehealth')]"
+
        ],
       "properties": {
         "workspaceResourceId": "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
         "referencedResources": [ ],
         "containedResources": [
-          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/pattontechmalwaresignatures')]",
-          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/pattontechservicehealth')]"
+
         ]
       },
       "plan": {

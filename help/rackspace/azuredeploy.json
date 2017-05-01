@@ -22,7 +22,7 @@
   },
   "resources": [
     {
-      "name": "[concat(variables('SolutionName'), '[ ' ,parameters('workspacename'), ' ]')]",
+      "name": "[concat(variables('SolutionName'), '[' ,parameters('workspacename'), ']')]",
       "location": "[resourceGroup().location]",
       "tags": { },
       "type": "Microsoft.OperationsManagement/solutions",

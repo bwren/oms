@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-            "value": "19ed14f3-d70a-4ad1-89bf-606bc0a9a18d"
+            "value": "bwren"
         },
         "artifactsLocation": {
-            "value": "https://raw.githubusercontent.com/jeffpatton1971/CustomOMSSolution/master/CustomOMSSolution"
+            "value": "https://raw.githubusercontent.com/bwren/oms/master/help/rackspace"
         }
     }
 }

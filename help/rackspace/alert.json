@@ -167,7 +167,7 @@
         "threshold": {
           "operator": "[variables('PattonTechAlert').Threshold.Operator]",
           "value": "[variables('PattonTechAlert').Threshold.Value]"
-        },
+        }
       }
     },
   ],

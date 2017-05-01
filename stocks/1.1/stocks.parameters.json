@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-          "value": "bwren"
+          "value": "bwren-rackspace"
         },
         "accountName": {
-          "value": "bwrenoms"
+          "value": "bwren-rackspace"
         },
         "workspaceregionId": {
             "value": "East US"

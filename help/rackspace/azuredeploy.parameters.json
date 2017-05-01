@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-            "value": "bwren"
+            "value": "bwren-rackspace"
         },
         "artifactsLocation": {
             "value": "https://raw.githubusercontent.com/bwren/oms/master/help/rackspace"

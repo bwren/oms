@@ -1,0 +1,85 @@
+{
+   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+   "contentVersion": "1.0",
+   "parameters": { 
+        "WorkspaceName": {
+            "type": "string"
+        }
+    },
+   "variables": { 
+       "SearchCategory": "Stocks",
+       
+        "LogAnalyticsApiVersion": "2015-11-01-preview",
+
+        "PercentChangeSearch": {
+        "DisplayName": "Big percent price change",
+        "Query": "Type=StockQuote_CL  ChangePercent_d > 1 OR ChangePercent_d < -1 TimeGenerated>NOW-1HOUR",
+        "ID": "[toLower(concat(variables('SearchCategory'), '| Big percent price change'))]"
+        },
+
+        "PercentChangeAlert": {
+        "ID": "[toLower(concat('percentchangealert-',uniqueString(resourceGroup().id, deployment().name)))]",
+        "ScheduleID": "[toLower(concat('percentchangeschedule-',uniqueString(resourceGroup().id, deployment().name)))]",
+        "Name": "Stock change alert",
+        "Description": "Alerts when a stock moves over 5 percent.",
+        "Severity": "PercentChangeAlert",
+        "ScheduleInterval": 60,
+        "TimeSpan": 60,
+        "Threshold": {
+            "Operator": "gt",
+            "Value": 0
+        },
+        "Subject": "Stock change alert"
+        }
+    },
+   "resources": [ 
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "name": "[concat(parameters('workspaceName'), '/', variables('PercentChangeSearch').ID)]",
+            "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+            "dependsOn": [
+            ],
+            "tags": { },
+            "properties": {
+                "etag": "*",
+                "query": "[variables('PercentChangeSearch').Query]",
+                "displayName": "[variables('PercentChangeSearch').DisplayName]",
+                "category": "[variables('SearchCategory')]"
+            }
+        },
+        {
+            "name": "[concat(parameters('workspaceName'), '/', variables('PercentChangeSearch').ID, '/', variables('PercentChangeAlert').ScheduleID)]",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/",
+            "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('PercentChangeSearch').ID)]"
+            ],
+            "properties": {
+                "etag": "*",
+                "Interval": "[variables('PercentChangeAlert').ScheduleInterval]",
+                "QueryTimeSpan": "[variables('PercentChangeAlert').TimeSpan]",
+                "enabled": true
+            }
+        },
+        {
+            "name": "[concat(parameters('workspaceName'), '/', variables('PercentChangeSearch').ID, '/', variables('PercentChangeAlert').ScheduleID, '/', variables('PercentChangeAlert').ID)]",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+            "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('PercentChangeSearch').ID, '/schedules/', variables('PercentChangeAlert').ScheduleID)]"
+            ],
+            "properties": {
+                "etag": "*",
+                "Type": "Alert",
+                "Name": "[variables('PercentChangeAlert').Name]",
+                "Description": "[variables('PercentChangeAlert').Description]",
+                "Severity": "[variables('PercentChangeAlert').Severity]",
+                "Threshold": {
+                "Operator": "[variables('PercentChangeAlert').Threshold.Operator]",
+                "Value": "[variables('PercentChangeAlert').Threshold.Value]"
+                }
+            }
+        }
+    ],
+   "outputs": {  }
+}

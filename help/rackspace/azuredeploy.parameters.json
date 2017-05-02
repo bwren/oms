@@ -4,9 +4,7 @@
     "parameters": {
         "workspaceName": {
             "value": "bwren-rackspace"
-        },
-        "artifactsLocation": {
-            "value": "https://raw.githubusercontent.com/bwren/oms/master/help/rackspace"
         }
+
     }
 }

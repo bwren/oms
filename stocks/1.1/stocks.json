@@ -554,7 +554,7 @@
       "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
       "apiVersion": "[variables('LogAnalyticsApiVersion')]",
       "dependsOn": [
-        
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('PercentChangeSearch').ID, '/schedules/', variables('PercentChangeAlert').ScheduleID)]"
       ],
       "properties": {
         "etag": "*",

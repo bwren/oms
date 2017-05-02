@@ -21,7 +21,7 @@ Catch
     Exit
 }
 
-$header = "Symbol","LastTrade","LastTradeDate","LastTradeTime","Change", "PercentChange","Open","DayHigh","DayLow","Volume","PreviousClose"
+$header = "Symbol","LastTrade","LastTradeDate","LastTradeTime","Change", "ChangePercent","Open","DayHigh","DayLow","Volume","PreviousClose"
 
 try {
     $quotes = ConvertFrom-Csv -InputObject $response -Header $header
@@ -40,7 +40,7 @@ foreach ($quote in $quotes)
         Symbol =        [string]$quote.Symbol
         LastTrade =     [Single]$quote.LastTrade
         Change =        [Single]$quote.Change
-        PercentChange = [single]$quote.PercentChange.Replace("%","")/100
+        ChangePercent = [single]$quote.ChangePercent.Replace("%","")/100
         Open =          [Single]$quote.Open
         DayHigh =       [Single]$quote.DayHigh
         DayLow =        [Single]$quote.DayLow

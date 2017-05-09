@@ -1,0 +1,156 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0",
+    "parameters": {
+      "workspaceName": {
+        "type": "string",
+        "metadata": {
+          "Description": "Name of Log Analytics workspace"
+        }
+      },
+      "accountName": {
+        "type": "string",
+        "metadata": {
+          "Description": "Name of Automation account"
+        }
+      },
+      "workspaceregionId": {
+        "type": "string",
+        "metadata": {
+          "Description": "Region of Log Analytics workspace"
+        }
+      },
+      "regionId": {
+        "type": "string",
+        "metadata": {
+          "Description": "Region of Automation account"
+        }
+      },
+      "pricingTier": {
+        "type": "string",
+        "metadata": {
+          "Description": "Pricing tier of both Log Analytics workspace and Azure Automation account"
+        }
+      },
+      "recipients": {
+        "type": "string",
+        "metadata": {
+          "Description": "List of recipients for the email alert separated by semicolon"
+        }
+      }
+    },
+    "variables": {
+      "SolutionName": "MySolution",
+      "SolutionVersion": "1.0",
+      "SolutionPublisher": "Contoso",
+      "ProductName": "SampleSolution",
+
+      "LogAnalyticsApiVersion": "2015-11-01-preview",
+
+      "MySearch": {
+        "displayName": "Error records by hour",
+        "query": "Type=MyRecord_CL | measure avg(Rating_d) by Instance_s interval 60minutes",
+        "category": "Samples",
+        "Name": "Samples-Count of data"
+      },
+      "MyAlert": {
+        "Name": "[toLower(concat('myalert-',uniqueString(resourceGroup().id, deployment().name)))]",
+        "DisplayName": "My alert rule",
+        "Description": "Sample alert.  Fires when 3 error records found over hour interval.",
+        "Severity": "Critical",
+        "ThresholdOperator": "gt",
+        "ThresholdValue": 3,
+        "Schedule": {
+          "Name": "[toLower(concat('myschedule-',uniqueString(resourceGroup().id, deployment().name)))]",
+          "Interval": 15,
+          "TimeSpan": 60
+        },
+        "MetricsTrigger": {
+          "TriggerCondition": "Consecutive",
+          "Operator": "gt",
+          "Value": 3
+        },
+        "ThrottleMinutes": 60,
+        "Notification": {
+          "Recipients": [
+            "[parameters('recipients')]"
+          ],
+          "Subject": "Sample alert"
+        },
+        "Remediation": {
+          "RunbookName": "MyRemediationRunbook",
+          "WebhookUri": "https://s1events.azure-automation.net/webhooks?token=TluBFH3GpX4IEAnFoImoAWLTULkjD%2bTS0yscyrr7ogw%3d"
+        },
+        "Webhook": {
+          "Name": "MyWebhook",
+          "Uri": "https://MyService.com/webhook",
+          "Payload": "{\"field1\":\"value1\",\"field2\":\"value2\"}"
+        }
+      }
+    },
+    "resources": [
+
+      {
+        "name": "[concat(parameters('workspaceName'), '/', variables('MySearch').Name)]",
+        "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+        "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+        "dependsOn": [ ],
+        "tags": { },
+        "properties": {
+          "etag": "*",
+          "query": "[variables('MySearch').query]",
+          "displayName": "[variables('MySearch').displayName]",
+          "category": "[variables('MySearch').category]"
+        }
+      },
+      {
+        "name": "[concat(parameters('workspaceName'), '/', variables('MySearch').Name, '/', variables('MyAlert').Schedule.Name)]",
+        "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/",
+        "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+        "dependsOn": [
+          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('MySearch').Name)]"
+        ],
+        "properties": {
+          "etag": "*",
+          "interval": "[variables('MyAlert').Schedule.Interval]",
+          "queryTimeSpan": "[variables('MyAlert').Schedule.TimeSpan]",
+          "enabled": true
+        }
+      },
+      {
+        "name": "[concat(parameters('workspaceName'), '/', variables('MySearch').Name, '/',  variables('MyAlert').Schedule.Name, '/',  variables('MyAlert').Name)]",
+        "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+        "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+        "dependsOn": [
+          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/',  variables('MySearch').Name, '/schedules/', variables('MyAlert').Schedule.Name)]"
+        ],
+        "properties": {
+          "etag": "*",
+          "Type": "Alert",
+          "Name": "[variables('MyAlert').DisplayName]",
+          "Description": "[variables('MyAlert').Description]",
+          "Severity": "[variables('MyAlert').Severity]",
+          "Threshold": {
+            "Operator": "[variables('MyAlert').ThresholdOperator]",
+            "Value": "[variables('MyAlert').ThresholdValue]"
+          }
+        }
+      },
+      {
+        "name": "[concat(parameters('workspaceName'), '/', variables('MySearch').Name, '/', variables('MyAlert').Schedule.Name, '/', variables('MyAlert').Webhook.Name)]",
+        "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+        "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+        "dependsOn": [
+          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('MySearch').Name, '/schedules/', variables('MyAlert').Schedule.Name)]",
+          "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('MySearch').Name, '/schedules/', variables('MyAlert').Schedule.Name, '/actions/',variables('MyAlert').Name)]"
+        ],
+        "properties": {
+          "etag": "*",
+          "Type": "Webhook",
+          "Name": "[variables('MyAlert').Webhook.Name]",
+          "WebhookUri": "[variables('MyAlert').Webhook.Uri]",
+          "CustomPayload": "[variables('MyAlert').Webhook.Payload]"
+        }
+      }
+    ]
+}

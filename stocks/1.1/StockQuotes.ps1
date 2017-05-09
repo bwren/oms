@@ -48,7 +48,7 @@ foreach ($quote in $quotes)
         PreviousClose = [Single]$quote.PreviousClose
         LastTradeDate = [String]$quote.LastTradeDate
         LastTradeTime = [String]$quote.LastTradeTime
-        LastTradeDateTime = ((Get-Date -Date ($quote.LastTradeDate + ' ' + $quote.LastTradeTime)).AddHours(5)).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+        LastTradeDateTime = ((Get-Date -Date ($quote.LastTradeDate + ' ' + $quote.LastTradeTime))).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
     }
 
     Write-Verbose "Quote: $d"

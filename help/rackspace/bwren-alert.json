@@ -121,14 +121,14 @@
         }
         },
 
-        //"SavedSearchName": "[concat(parameters('WorkspaceName'),'/',variables('PattonTechAlert').SavedSearch.Name)]",
-        //"ScheduleName": "[concat(variables('SavedSearchName'),'/',variables('PattonTechAlert').Schedule.Name)]",
-        //"AlertName": "[concat(variables('ScheduleName'),'/',variables('PattonTechAlert').Action.Name, '-', uniqueString(resourceGroup().id, deployment().name))]",
+        "SavedSearchName": "[concat(parameters('WorkspaceName'),'/',variables('PattonTechAlert').SavedSearch.Name)]",
+        "ScheduleName": "[concat(variables('SavedSearchName'),'/',variables('PattonTechAlert').Schedule.Name)]",
+        "AlertName": "[concat(variables('ScheduleName'),'/',variables('PattonTechAlert').Action.Name, '-', uniqueString(resourceGroup().id, deployment().name))]",
         //WebhookName": "[concat(variables('ScheduleName'),'/',variables('PattonTechAlert').Webhook.Name)]"
 
-        "SavedSearchName": "[toLower(concat(variables('Category'), '|', variables('PattonTechAlert').SavedSearch.Name))]",
-        "ScheduleName": "[toLower(concat('schedule-',uniqueString(resourceGroup().id, deployment().name)))]",
-        "AlertName": "[toLower(concat('alert-',uniqueString(resourceGroup().id, deployment().name)))]"
+        //"SavedSearchName": "[toLower(concat(variables('Category'), '|', variables('PattonTechAlert').SavedSearch.Name))]",
+        //"ScheduleName": "[toLower(concat('schedule-',uniqueString(resourceGroup().id, deployment().name)))]",
+        //"AlertName": "[toLower(concat('alert-',uniqueString(resourceGroup().id, deployment().name)))]"
     },
    "resources": [ 
         {

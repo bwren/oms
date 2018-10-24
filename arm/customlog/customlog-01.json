@@ -1,0 +1,106 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "A valid Log Analytics workspace name"
+            }
+        }
+    },
+    "variables": {
+        "LogAnalyticsApiVersion": "2017-03-15-preview",
+        "workspaceName": "bwren"
+        "CustomLog": {
+            "Name": "CustomLogTest01",
+            "Description": "Custom log data source test"
+        }
+    },
+    "resources": [ 
+        {
+            "name": "[concat(parameters('workspaceName'), '/', variables('CustomLog').Name)]",
+            "type": "Microsoft.OperationalInsights/workspaces/dataSources",
+            "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+            "dependsOn": [],
+            "tags": { },
+            "kind":"CustomLog",
+            "properties": {
+                "customLogName": "[variables('CustomLog').Name]",
+                "description": "[variables('CustomLog').Description]",
+                "inputs": [{ 
+                    "location": { 
+                        "fileSystemLocations": { 
+                            "windowsFileTypeLogPaths": ["c:\\logs\\*.log"]
+                        } 
+                    }, 
+                    "recordDelimiter": { 
+                        "regexDelimiter": { 
+                            "pattern": "\\n", 
+                            "matchIndex": 0, 
+                            "matchIndexSpecified": true, 
+                            "numberedGroup": null 
+                        } 
+                    } 
+                }],
+                "extractions": [{ 
+                    "extractionName": "TimeGenerated", 
+                    "extractionType": "DateTime", 
+                    "extractionProperties": { 
+                        "dateTimeExtraction": { 
+                            "regex": null, 
+                            "joinStringRegex": null 
+                        } 
+                    } 
+                }] 
+            }
+        },
+        { 
+            "value": [{ 
+                "name": "CustomLogTest03_CL!Component_CF", 
+                "type": "Microsoft.OperationalInsights/workspaces/customfields", 
+                "properties": { 
+                    "internalName": "Component_CF_ssic", 
+                    "isDeleted": false, 
+                    "name": "Component_CF", 
+                    "displayName": "Component_CF", 
+                    "type": 0, 
+                    "filtercriteria": [], 
+                    "extraction": { 
+                        "type": "Flash", 
+                        "learningExamples": [], 
+                        "xmlProgram": "...", 
+                        "readableProgram": "...", 
+                        "sourceType": "CustomLogTest03_CL", 
+                        "sourceField": "RawData" 
+                    }, 
+                    "indexed": true, 
+                    "stored": true, 
+                    "facet": true, 
+                    "freeText": true, 
+                    "defaultDisplay": true 
+                } 
+            }] 
+        } 
+     ],
+    "outputs": {  }
+ }
+
+
+
+{
+          "apiVersion": "2017-03-15-preview",
+          "name": "VMSS Queries2",
+          "type": "savedSearches",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+          ],
+          "properties": {
+            "Category": "VMSS",
+            "ETag": "*",
+            "DisplayName": "VMSS Instance Count",
+            "Query": "CustomLogTable | extend StatusCode = extract('StatusCode ([0-9]*)', 1, tostring(SomeColumn)) | project TimeGenerated, StatusCode",
+            "Version": 2,
+            "FunctionAlias": myExtractedCustomLogTable,
+          }
+        },

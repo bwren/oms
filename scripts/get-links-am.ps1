@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [ValidateScript({ Test-Path $_ })]
-    $reporoot = 'C:\Users\bwren\Git\azure-docs-pr\articles\monitoring-and-diagnostics'
+    $reporoot = 'C:\Users\bwren\Git\azure-docs-pr\articles\monitoring'
 )
 
 function resolveURL {

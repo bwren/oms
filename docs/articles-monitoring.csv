@@ -1,0 +1,6 @@
+OldArticle,NewArticle
+monitoring\monitoring-container-insights-overview.md,azure-monitor\platform\container-insights-overview.md
+monitoring\monitoring-solutions-inventory.md,azure-monitor\platform\solutions-inventory.md
+monitoring\monitoring-data-sources.md,azure-monitor\platform\data-sources.md
+monitoring\monitoring-data-collection.md,azure-monitor\platform\data-collection.md
+monitoring\monitoring-overview-azure-agents.md,azure-monitor\platform\overview-azure-agents.md

@@ -44,17 +44,19 @@ foreach ($article in $articles)
     Move-Item -Path $article.OldFile -Destination $article.NewFile
 
     ## Move images
-    if (-not (Test-Path $article.NewMediaFolder))
-    {
-        'New-Item  -Path {0} -Name {1} -ItemType "directory"' -f (Split-Path $article.NewMediaFolder -parent), (Split-Path $article.NewMediaFolder -leaf)
-        New-Item  -Path (Split-Path $article.NewMediaFolder -parent) -Name (Split-Path $article.NewMediaFolder -leaf) -ItemType "directory"
-    }
+    if (Test-Path $article.OldMediaFolder) {
+        if (-not (Test-Path $article.NewMediaFolder))
+        {
+            'New-Item  -Path {0} -Name {1} -ItemType "directory"' -f (Split-Path $article.NewMediaFolder -parent), (Split-Path $article.NewMediaFolder -leaf)
+            New-Item  -Path (Split-Path $article.NewMediaFolder -parent) -Name (Split-Path $article.NewMediaFolder -leaf) -ItemType "directory"
+        }
 
-    $images = Get-ChildItem -Path $article.OldMediaFolder
-    foreach ($image in $images)
-    {
-        "Move-Item -Path {0} -Destination {1}" -f  $image.FullName, $article.NewMediaFolder 
-        Move-Item -Path $image.FullName -Destination $article.NewMediaFolder 
+        $images = Get-ChildItem -Path $article.OldMediaFolder
+        foreach ($image in $images)
+        {
+            "Move-Item -Path {0} -Destination {1}" -f  $image.FullName, $article.NewMediaFolder 
+            Move-Item -Path $image.FullName -Destination $article.NewMediaFolder 
+        }
     }
 }
 

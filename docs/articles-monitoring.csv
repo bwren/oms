@@ -1,11 +1,7 @@
 OldArticle,NewArticle
-log-analytics\log-analytics-data-sources.md,azure-monitor\platform\agent-data-sources.md
-log-analytics\log-analytics-data-sources-alerts-nagios-zabbix.md,azure-monitor\platform\data-sources-alerts-nagios-zabbix.md
-log-analytics\log-analytics-data-sources-collectd.md,azure-monitor\platform\data-sources-collectd.md
-log-analytics\log-analytics-data-sources-custom-logs.md,azure-monitor\platform\data-sources-custom-logs.md
-log-analytics\log-analytics-data-sources-iis-logs.md,azure-monitor\platform\data-sources-iis-logs.md
-log-analytics\log-analytics-data-sources-json.md,azure-monitor\platform\data-sources-json.md
-log-analytics\log-analytics-data-sources-linux-applications.md,azure-monitor\platform\data-sources-linux-applications.md
-log-analytics\log-analytics-data-sources-performance-counters.md,azure-monitor\platform\data-sources-performance-counters.md
-log-analytics\log-analytics-data-sources-syslog.md,azure-monitor\platform\data-sources-syslog.md
-log-analytics\log-analytics-data-sources-windows-events.md,azure-monitor\platform\data-sources-windows-events.md
+log-analytics\log-analytics-powershell-workspace-configuration.md,azure-monitor\platform\powershell-workspace-configuration.md
+log-analytics\log-analytics-quick-collect-azurevm.md,azure-monitor\learn\quick-collect-azurevm.md
+log-analytics\log-analytics-quick-collect-linux-computer.md,azure-monitor\learn\quick-collect-linux-computer.md
+log-analytics\log-analytics-sccm.md,azure-monitor\platform\collect-sccm.md
+log-analytics\log-analytics-usage.md,azure-monitor\platform\usage.md
+log-analytics\powershell-samples.md,azure-monitor\platform\log-analytics-powershell-samples.md

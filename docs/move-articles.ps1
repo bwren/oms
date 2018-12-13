@@ -157,3 +157,9 @@ foreach ($allArticle in $allArticles)
     }
 }
 
+
+
+
+# Azure Monitor move - Monitoring and Diagnostics articles 01
+
+# This PR includes 9 articles being moved with 35 images. There should be about 40 other articles here that only include updated links to the moved articles. There are no changes to actual content.

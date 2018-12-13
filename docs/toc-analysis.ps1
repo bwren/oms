@@ -1,5 +1,5 @@
 ﻿$toc = gc C:\Users\bwren\Git\azure-docs-pr\articles\azure-monitor\toc.yml
-$outFile = "C:\Users\bwren\OneDrive\scripts\oms\azure-monitor-toc.csv"
+$outFile = "C:\Users\bwren\Git\bwren\docs\azure-monitor-toc.csv"
 
 if (Test-Path $outFile) { Remove-Item $outFile }
 
@@ -28,19 +28,20 @@ foreach ( $entry in $toc )
         if ($href.EndsWith(".md"))
         {
             $name = $href.Substring($href.LastIndexOf("/")+1)
-            $folder  = $href.Split("/")[1]
+            $folder  = $href.Replace($name,"") #$href.Split("/")[1]
         }
         else 
         {
             $name = $href.trim()
         }
         
-        $article | Add-Member Noteproperty header $header
-        $article | Add-Member Noteproperty path $fullpath
+        $article | Add-Member Noteproperty header  $header
+        $article | Add-Member Noteproperty path    $fullpath
         $article | Add-Member Noteproperty section $section
-        $article | Add-Member Noteproperty title $title
-        $article | Add-Member Noteproperty folder $folder
-        $article | Add-Member Noteproperty name $name
+        $article | Add-Member Noteproperty title   $title
+        $article | Add-Member Noteproperty href    $href
+        $article | Add-Member Noteproperty folder  $folder
+        $article | Add-Member Noteproperty name    $name
 
         $article | Export-Csv -Path $outFile -Append
 

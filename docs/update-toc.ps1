@@ -9,7 +9,7 @@ $toc = gc($tocpath) -raw
 foreach ($article in $articles)
 {
     $oldpath = '../{0}?toc=/azure/azure-monitor/toc.json' -f $article.OldArticle.Replace('\','/')
-    $newpath = $article.NewArticle.Replace("azure-monitor/","").Replace('\','/')
+    $newpath = $article.NewArticle.Replace('\','/').Replace("azure-monitor/","")
     $toc = $toc.Replace($oldpath, $newpath)
 }
 

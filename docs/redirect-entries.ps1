@@ -11,5 +11,5 @@ foreach ($article in $articles)
     $redirect.redirect_url = '/azure/{0}' -f $article.NewArticle.Replace('\','/').Replace('.md','')
     $redirect.redirect_document_id = $true
 
-    $redirect | ConvertTo-Json
+    ($redirect | ConvertTo-Json).replace("}","},")
 }

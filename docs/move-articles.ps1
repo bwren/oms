@@ -158,8 +158,31 @@ foreach ($allArticle in $allArticles)
 }
 
 
+########################### Update articles for includes
 
 
-# Azure Monitor move - Monitoring and Diagnostics articles 01
+$allArticles = Get-ChildItem 'C:\Users\bwren\Git\azure-docs-pr\includes' -Filter *.md -Recurse
+$allArticles.Count
+
+foreach ($allArticle in $allArticles)
+{
+    #if ($allArticle.FullName.IndexOf("log-analytics") -gt 0) { '****** {0}' -f $allArticle.FullName }
+    $allArticleText = gc $allArticle.FullName -Raw
+    foreach ($article in $articles)
+    {
+        if ($allArticleText.IndexOf($article.OldArticle.replace('\','/')) -gt 0)
+        {
+            '{0}\{1}: {2}: {3}' -f  (Split-Path $allArticle.Directory -leaf), $allArticle.Name, $article.OldArticle, $article.NewArticle
+            $allArticleText = $allArticleText.Replace($article.OldArticle, $article.NewArticle.replace('\','/'))
+            $allArticleText = $allArticleText.Replace($article.OldArticle.replace('\','/'), $article.NewArticle.replace('\','/'))
+            $allArticleText | Set-Content $allArticle.FullName -NoNewline
+        }     
+    }
+}
+
+
+
+
+# Azure Monitor move - Application Insights articles 01
 
 # This PR includes 9 articles being moved with 35 images. There should be about 40 other articles here that only include updated links to the moved articles. There are no changes to actual content.

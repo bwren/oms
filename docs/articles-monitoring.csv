@@ -1,13 +1,2 @@
 OldArticle,NewArticle
-monitoring-and-diagnostics\monitoring-supported-metrics.md,azure-monitor\platform\metrics-supported.md
-monitoring-and-diagnostics\monitoring-rest-api-walkthrough.md,azure-monitor\platform\rest-api-walkthrough.md
-monitoring-and-diagnostics\monitoring-autoscale-get-started.md,azure-monitor\platform\autoscale-get-started.md
-monitoring-and-diagnostics\monitor-send-to-grafana.md,azure-monitor\platform\grafana-plugin.md
-monitoring-and-diagnostics\monitoring-usage-and-estimated-costs.md,azure-monitor\platform\usage-estimated-costs.md
-monitoring-and-diagnostics\monitoring-autoscale-common-scale-patterns.md,azure-monitor\platform\autoscale-common-scale-patterns.md
-monitoring-and-diagnostics\monitoring-partners.md,azure-monitor\platform\partners.md
-monitoring-and-diagnostics\monitor-diagnostic-logs-append-blobs.md,azure-monitor\platform\diagnostic-logs-append-blobs.md
-monitoring-and-diagnostics\metrics-store-custom-rest-api.md,azure-monitor\platform\collect-custom-metrics-rest-api.md
-monitoring-and-diagnostics\monitoring-data-sources.md,azure-monitor\platform\data-sources-reference.md
-monitoring-and-diagnostics\monitoring-stream-diagnostic-logs-to-event-hubs.md,azure-monitor\platform\diagnostic-logs-stream-event-hubs.md
-monitoring-and-diagnostics\monitor-stream-diagnostic-logs-log-analytics.md,azure-monitor\platform\diagnostic-logs-stream-log-store.md
+application-insights\app-insights-overview.md,azure-monitor\app\app-insights-overview.md

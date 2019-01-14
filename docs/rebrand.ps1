@@ -1,4 +1,5 @@
-﻿$baseFolder = 'C:\Users\bwren\Git\azure-docs-pr\articles\azure-monitor'
+﻿$toc = gc C:\Users\bwren\Git\azure-docs-pr\articles\azure-monitor\toc.yml
+$baseFolder = 'C:\Users\bwren\Git\azure-docs-pr\articles\azure-monitor'
 $articles = Get-ChildItem $baseFolder -Filter *.md -Recurse
 
 $terms = "log analytics", "metrics explorer", "management solution", "azure monitor query language", "log analytics query language", "kusto"

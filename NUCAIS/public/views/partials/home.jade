@@ -1,0 +1,198 @@
+nav.navbar(ng-class="{'scroll-nav':isScrolling}")
+  div.nav-top-container
+    div.logo
+      img(ng-src="{{nav.img}}", ng-click="jump('intro')")
+    mobile-burger
+  menu-options#drop-menu.slideable
+
+div.overlay(ng-show="active")
+
+section#intro
+  div.container.center
+    div.jumbotron.intro-text
+      div.top-title-contain
+        h1.intro-year.animated.fadeIn 2019
+        h2.animated.fadeIn COLLEGIATE ALTERNATIVE INVESTMENT SUMMIT
+      div.line-divider.animated.fadeIn
+      img.nu-seal(src="/public/assets/img/nu-seal.png")
+      div.intro-date-contain
+        h2.animated.fadeIn APRIL 5 - 6
+      div.apply-btn-container
+        a.apply-btn.animated.fadeIn(ng-hide="hideButton", target="_blank", href=" https://goo.gl/forms/b2FEBE6ANd4FbTwf1") REGISTER NOW
+      //h2.registration-warning {{getTimeLeftMessage()}}
+
+section#about
+  //h1.section-title.animated(ng-class="{slideInLeft:anAbout, 'not-visible':!anAbout}") {{about.title}}
+  //h2.sub-highlight LISTEN <span class="small-dot">•</span> LEARN <span class="small-dot">•</span> NETWORK
+  //div.line-divider
+  div.about-intro
+      img.marquee(src="/public/assets/img/cais_logo.jpg")
+      div.line-divider
+
+  div.container.center.billboard
+    div.row
+      div.brief {{about.summary1}}
+    div.row
+      div.brief {{about.summary2}}
+  div.clear
+
+section#speakers
+  h1.section-title.animated(ng-class="{slideInLeft:anSpeakers, 'not-visible':!anSpeakers}") 2019 Speakers
+  div.line-divider
+  div.container.animated(ng-class="{slideInRight:anSpeakerPics, 'not-visible':!anSpeakerPics}", ng-repeat="item in speakers")
+    div.row
+      h2 {{item.category}}
+      div.col-md-3.col-centered.member-box(ng-repeat="speaker in item.members")
+        div.img-responsive(ng-click='toggleModal(speaker)', ng-class="{'cursor-pointer': speaker.bioParagraphs && speaker.bioParagraphs.length}")
+          img(ng-src="{{speaker.img}}")
+        p.member-name {{speaker.name}} #[span.black(ng-if="speaker.isModerator") (Moderator)]
+        p.ital {{speaker.title}}, {{speaker.company}}
+
+div.ng-modal(ng-show='modalVisible')
+  div.ng-modal-overlay(ng-click='hideModal()')
+  div.ng-modal-dialog(ng-style='dialogStyle')
+    div.ng-modal-close(ng-click='hideModal()')
+      i.fa.fa-close
+    div.ng-modal-dialog-content
+      h1 {{modalSpeaker.name}}
+      h2 {{modalSpeaker.title}}, {{modalSpeaker.company}}
+      p(ng-repeat="paragraph in modalSpeaker.bioParagraphs") {{paragraph}}
+
+section#schedule
+  h1.section-title.animated(ng-class="{slideInLeft:anSchedule, 'not-visible':!anSchedule}") 2019 Schedule
+  div.line-divider
+  div.container.animated(ng-class="{fadeInUp:anScheduleChart, 'not-visible':!anScheduleChart}")
+    div.billboard
+      h2 Alumni Night
+      h3 Friday, April 5, 5:30 PM - 9:00 PM
+      div.table-responsive
+        table.table.schedule-table.table-condensed
+          thead
+            tr(ng-repeat="row in schedule.friday")
+              td.time-cell {{row.time}}
+              td.activity-cell {{row.activity}}
+              td.speaker-cell {{row.speaker}}
+
+      h2 Conference
+      h3 Saturday, April 6, 8:30 AM - 5:00 PM
+      div.table-responsive
+        table.table.table-condensed.schedule-table
+          thead
+            tr(ng-repeat="row in schedule.saturday")
+              td.time-cell {{row.time}}
+              td.activity-cell {{row.activity}}
+              td.speaker-cell {{row.speaker}}
+        p.asterisk * Denotes moderator of panel
+
+section#location
+  h1.section-title Location
+  div.container
+    div.row.row-centered
+      div.col-md-12#map.col-centered
+    div.row.row-centered.location-text-holder
+      div.col-md-6.location-text
+        h2 Alumni Night
+        p.ital Behrakis Health Sciences Center
+        p.ital 30 Leon Street
+        p.ital Boston, MA 02115
+      div.col-md-6.location-text
+        h2 Conference
+        p.ital Northeastern Interdisciplinary Science & Engineering Complex
+        p.ital 805 Columbus Avenue
+        p.ital Boston, MA 02115
+
+section#faq
+  h1.section-title.animated(ng-class="{slideInLeft:anFaq, 'not-visible':!anFaq}") FAQ
+  div.faq-div.animated(ng-class="{slideInRight:anFaqs, 'not-visible':!anFaqs}")
+    ul
+      li(ng-repeat="faq in faqs")
+        h2.faq-question {{faq.question}}
+        p {{faq.answer}}
+
+  div.contact-link-div
+    a.contact-link(ng-click="jump('contact')") Don't see your question here?
+
+section#sponsors
+  h1.section-title.animated(ng-class="{slideInLeft:anSponsors, 'not-visible':!(anSponsors)}") 2018 Sponsors
+  h2.section-subtitle.animated(ng-class="{slideInLeft:anSponsors, 'not-visible':!(anSponsors)}") To donate, please visit our #[a(target="_blank", href="https://giving.northeastern.edu/live/profiles/491-collegiate-alternative-investment-summit") funding page]
+  div.line-divider
+  div.container
+    div.row.row-centered
+      div(ng-repeat="category in sponsors")
+        h2.sponsor-title.section- {{category.category}}
+        div.col-md-6.col-centered.sponsor(ng-repeat="sponsor in category.members")
+          img.img-responsive.sponsor-img(ng-src="{{sponsor.img}}")
+          p.sponsor-facts(ng-if="sponsor.hasFacts") WallStreetOasis.com is the largest online community focused on careers in finance. Make sure to check out their guides that can help you ace your <a target="_blank" href="http://www.wallstreetoasis.com/guide/investment-banking-interview-prep-questions">investment banking interviews</a> and <a target="_blank" href="http://www.wallstreetoasis.com/guide/hedge-fund-interview-questions">hedge fund interviews</a>.
+
+section#press-releases
+  h1.section-title 2017 Press Releases
+  div.line-divider
+  div.container
+    div.row.row-centered
+      div.col-md-3.col-centered.black-border(ng-repeat="p in press", ng-class="{'small-padding-top': p.paddingTop, 'extra-padding': p.extraPadding}")
+        a(target="_blank", ng-href="{{p.link}}")
+          img.img-responsive.press-release(ng-src="{{p.img}}")
+
+section#past-speakers
+  h1.section-title.animated(ng-class="{slideInLeft:anPastSpeakers, 'not-visible':!anPastSpeakers}") Past Keynote Speakers
+  div.container.animated(ng-class="{slideInRight:anPastSpeakersPics, 'not-visible':!anPastSpeakersPics}")
+    div.row
+      div.col-md-4.member-box(ng-repeat="speaker in pastSpeakers")
+        div.img-responsive
+          img(ng-src="{{speaker.img}}")
+        p.member-name {{speaker.name}}
+        p.ital {{speaker.title + ' at '}}
+        p.ital {{speaker.company}}
+
+
+section#selected-presentations
+  h1.section-title.animated(ng-class="{slideInLeft:anPresentations, 'not-visible':!(anPresentations)}") Selected Presentations
+  p.subtitle  From our 2013 and 2014 Conferences
+
+  div.container.animated(ng-class="{slideInRight:anVids, 'not-visible':!anVids}")
+    div.row.row-centered
+      div.col-md-6.col-centered.member-box(ng-repeat="vid in presentations")
+        div.embed-container
+          iframe(width="640" height="360" ng-src="{{vid.url}}" frameborder="0" allowfullscreen)
+
+section#management-committee
+  h1.section-title.animated(ng-class="{slideInLeft:anTeam, 'not-visible':!anTeam}") Management Committee
+  div.line-divider
+  div.container.animated(ng-class="{slideInRight:anTeamPics, 'not-visible':!anTeamPics}")
+    div.row.row-centered
+      div.col-md-4.col-sm-1.member-box.col-centered(ng-repeat="member in team")
+        a(target="_blank", ng-href="{{member.linkedin}}")
+          div.img-responsive
+            img(ng-src="{{member.img}}")
+            div.info-appear
+              i.fa.fa-linkedin.icon-appear.fa-5x
+            p {{member.name}}
+            p.ital {{member.title}}
+
+section#advisory-board
+  h1.section-title.animated(ng-class="{slideInLeft:anAdvisory, 'not-visible':!anAdvisory}") Advisory Board
+  div.line-divider
+  div.container.animated(ng-class="{slideInRight:anAdvisoryPics, 'not-visible':!anAdvisoryPics}")
+    div.row
+      div.col-md-3.col-centered.member-box(ng-repeat="member in advisoryBoard")
+        a(target="_blank", ng-href="{{member.linkedin}}")
+          div.img-responsive
+            img(ng-src="{{member.img}}")
+            div.info-appear
+              i.fa.fa-linkedin.icon-appear.fa-5x
+              //span.img-caption
+              //p {{member.info}}
+            p {{member.name}}
+            p.ital {{member.title}}
+
+section#contact
+  h1.section-title.animated Get In Touch
+  div.contact-blurb
+    div.line-divider.white
+  div.social-links
+    a.social-btn(target="_blank", href="https://www.linkedin.com/groups/4541006")
+      i.fa.fa-linkedin.fa-2x
+    a.social-btn(href="mailto:contactnucais@gmail.com")
+      i.fa.fa-envelope.fa-2x
+    a.social-btn(target="_blank", href="https://www.facebook.com/officialNUCAIS")
+      i.fa.fa-facebook.fa-2x

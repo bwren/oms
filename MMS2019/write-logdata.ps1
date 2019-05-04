@@ -14,15 +14,15 @@ $TimeStampField = "DateValue"
 # Create two records with the same set of properties to create
 $json = @"
 [{  "StringValue": "MyString1",
-    "NumberValue": 32,
+    "NumberValue": 50,
     "BooleanValue": true,
-    "DateValue": "2019-03-30T20:00:00.625Z",
+    "DateValue": "2019-05-03T20:00:00.625Z",
     "GUIDValue": "9909ED01-A74C-4874-8ABF-D2678E3AE23D"
 },
 {   "StringValue": "MyString2",
-    "NumberValue": 33,
+    "NumberValue": 51,
     "BooleanValue": false,
-    "DateValue": "2019-03-30T20:00:00.625Z",
+    "DateValue": "2019-05-03T20:00:00.625Z",
     "GUIDValue": "8809ED01-A74C-4874-8ABF-D2678E3AE23D"
 }]
 "@

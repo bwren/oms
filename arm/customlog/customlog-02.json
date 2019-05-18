@@ -1,0 +1,60 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "A valid Log Analytics workspace name"
+            }
+        }
+    },
+    "variables": {
+        "LogAnalyticsApiVersion": "2015-11-01-preview",
+        "workspaceName": "bwren",
+        "CustomLog": {
+            "Name": "CustomLogTest01",
+            "Description": "Custom log data source test"
+        }
+    },
+    "resources": [ 
+        {
+            "name": "[concat(parameters('workspaceName'), '/', variables('CustomLog').Name)]",
+            "type": "Microsoft.OperationalInsights/workspaces/dataSources",
+            "apiVersion": "[variables('LogAnalyticsApiVersion')]",
+            "dependsOn": [],
+            "tags": { },
+            "kind":"CustomLog",
+            "properties": {
+                "customLogName": "[variables('CustomLog').Name]",
+                "description": "[variables('CustomLog').Description]",
+                "inputs": [{ 
+                    "location": { 
+                        "fileSystemLocations": { 
+                            "windowsFileTypeLogPaths": ["c:\\logs\\*.log"]
+                        } 
+                    }, 
+                    "recordDelimiter": { 
+                        "regexDelimiter": { 
+                            "pattern": "\\n", 
+                            "matchIndex": 0, 
+                            "matchIndexSpecified": true, 
+                            "numberedGroup": null 
+                        } 
+                    } 
+                }],
+                "extractions": [{ 
+                    "extractionName": "TimeGenerated", 
+                    "extractionType": "DateTime", 
+                    "extractionProperties": { 
+                        "dateTimeExtraction": { 
+                            "regex": null, 
+                            "joinStringRegex": null 
+                        } 
+                    } 
+                }] 
+            }
+        } 
+     ],
+    "outputs": {  }
+ }

@@ -1,5 +1,5 @@
 # NUCAIS
-Official website for Northeastern University's 2017 College Alternative Investment Summit
+Official website for Northeastern University's 2019 College Alternative Investment Summit
 
 ### Setup Instructions
 1. Install node and npm

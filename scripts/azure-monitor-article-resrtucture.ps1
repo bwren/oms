@@ -1,7 +1,7 @@
 ﻿$tocfilefolder = "azure-monitor" 
 $tocfile = gc C:\Users\bwren\Git\azure-docs-pr\articles\$tocfilefolder\toc.yml
 $services = @("azure-monitor","log-analytics","application-insights","monitoring-and-diagnostics","monitoring")
-$outFile = "C:\Users\bwren\OneDrive\scripts\oms\azure-monitor-articles.csv"
+$outFile = "C:\Users\bwren\Git\bwren\docs\azure-monitor-articles.csv"
 
 $toc = @{}
 $path = ("","","","","","","","","","")

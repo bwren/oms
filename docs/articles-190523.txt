@@ -6,7 +6,7 @@ data-platform-logs.md
 data-ingestion-time.md 
 insights-overview.md
 solutions-inventory.md
-activity-logs-overview.md
+platform-logs-overview.md
 activity-log-view.md
 activity-log-collect.md
 activity-log-collect-tenants.md

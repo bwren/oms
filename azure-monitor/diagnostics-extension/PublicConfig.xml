@@ -1,0 +1,30 @@
+<DiagnosticsConfiguration  xmlns="http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration">   
+  <PublicConfig>  
+    <WadCfg>  
+      <DiagnosticMonitorConfiguration overallQuotaInMB="10000">  
+
+        <PerformanceCounters scheduledTransferPeriod="PT1M", sinks="AzureMonitorSink">  
+          <PerformanceCounterConfiguration counterSpecifier="\Processor(_Total)\% Processor Time" sampleRate="PT1M" unit="percent" />  
+        </PerformanceCounters>  
+
+        <WindowsEventLog scheduledTransferPeriod="PT5M">  
+          <DataSource name="Application!*"/>  
+          <DataSource name="System!*[System[Provider[@Name='NTFS'] and (EventID=55)]]" />  
+          <DataSource name="System!*[System[Provider[@Name='disk'] and (EventID=7 or EventID=52 or EventID=55)]]" />  
+        </WindowsEventLog>  
+
+        </DiagnosticMonitorConfiguration>  
+
+        <SinksConfig>  
+            <Sink name="myEventHub">
+            <EventHub Url="https://bwren-eventhub.servicebus.windows.net/insights-operational-logs" SharedAccessKeyName="SendRule" usePublisherId="false" />
+            </Sink>
+        </SinksConfig>
+
+      </DiagnosticMonitorConfiguration>
+    </WadCfg>
+  
+    <StorageAccount>bwlabdiag668</StorageAccount>
+    <StorageType>TableAndBlob</StorageType> 
+    </PublicConfig>  
+</DiagnosticsConfiguration>

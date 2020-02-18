@@ -1,0 +1,107 @@
+{
+    "PublicConfig": {
+      "StorageAccount": "bwlabdiag668",
+      "WadCfg": {
+        "DiagnosticMonitorConfiguration": {
+          "overallQuotaInMB": 5120,
+          "Metrics": {
+            "resourceId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-lab/providers/Microsoft.Compute/virtualMachines/bwlab-scom01",
+            "MetricAggregation": [
+              {
+                "scheduledTransferPeriod": "PT1H"
+              },
+              {
+                "scheduledTransferPeriod": "PT1M"
+              }
+            ]
+          },
+          "DiagnosticInfrastructureLogs": {
+            "scheduledTransferLogLevelFilter": "Error",
+            "scheduledTransferPeriod": "PT1M"
+          },
+          "PerformanceCounters": {
+            "scheduledTransferPeriod": "PT1M",
+            "PerformanceCounterConfiguration": [
+              {
+                "counterSpecifier": "\\Processor Information(_Total)\\% Processor Time",
+                "unit": "Percent",
+                "sampleRate": "PT60S"
+              },
+              {
+                "counterSpecifier": "\\Processor Information(_Total)\\% Privileged Time",
+                "unit": "Percent",
+                "sampleRate": "PT60S"
+              },
+              {
+                "counterSpecifier": "\\Processor Information(_Total)\\% User Time",
+                "unit": "Percent",
+                "sampleRate": "PT60S"
+              },
+              {
+                "counterSpecifier": "\\Processor Information(_Total)\\Processor Frequency",
+                "unit": "Count",
+                "sampleRate": "PT60S"
+              },
+              {
+                "counterSpecifier": "\\System\\Processes",
+                "unit": "Count",
+                "sampleRate": "PT60S"
+              },
+              {
+                "counterSpecifier": "\\Process(_Total)\\Thread Count",
+                "unit": "Count",
+                "sampleRate": "PT60S"
+              },
+              {
+                "counterSpecifier": "\\Process(_Total)\\Handle Count",
+                "unit": "Count",
+                "sampleRate": "PT60S"
+              },
+              {
+                "counterSpecifier": "\\System\\System Up Time",
+                "unit": "Count",
+                "sampleRate": "PT60S"
+              },
+              {
+                "counterSpecifier": "\\System\\Context Switches/sec",
+                "unit": "CountPerSecond",
+                "sampleRate": "PT60S"
+              },
+              {
+                "counterSpecifier": "\\System\\Processor Queue Length",
+                "unit": "Count",
+                "sampleRate": "PT60S"
+              }
+            ]
+          },
+          "WindowsEventLog": {
+            "scheduledTransferPeriod": "PT1M",
+            "DataSource": [
+              {
+                "name": "Application!*[System[(Level=1 or Level=2 or Level=3)]]"
+              },
+              {
+                "name": "System!*[System[(Level=1 or Level=2 or Level=3)]]"
+              },
+              {
+                "name": "Security!*[System[(band(Keywords,4503599627370496))]]"
+              }
+            ]
+          },
+          "Directories": {
+            "scheduledTransferPeriod": "PT1M"
+          }
+        }
+      }
+    },
+    "PrivateConfig": {
+        "storageAccountName": "bwlabdiag668",
+        "storageAccountKey": "g7oViR9xrOkVT97/Nq3fi3a/7xZjHQUnayQFQkNbwV7dedNmByAuo5STxNw4lDOQqwtxsnNEsOguu+LNwN3HjA==",
+        "storageAccountEndPoint": "https://bwlabdiag668.blob.core.windows.net",
+        "EventHub": {
+            "Url": "https://bwren-eventhub.servicebus.windows.net/insights-operational-logs",
+            "SharedAccessKeyName": "SendRule",
+            "SharedAccessKey": "whaHI53zGi5k5th/PpJWc6Tv/V1nd+X5OgTfHno1d9c="
+        }
+    }
+}

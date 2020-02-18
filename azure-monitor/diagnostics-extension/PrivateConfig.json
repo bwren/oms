@@ -1,0 +1,10 @@
+{
+    "storageAccountName": "bwlabdiag668",
+    "storageAccountKey": "g7oViR9xrOkVT97/Nq3fi3a/7xZjHQUnayQFQkNbwV7dedNmByAuo5STxNw4lDOQqwtxsnNEsOguu+LNwN3HjA==",
+    "storageAccountEndPoint": "https://bwlabdiag668.blob.core.windows.net",
+    "EventHub": {
+        "Url": "https://bwren-eventhub.servicebus.windows.net/insights-operational-logs",
+        "SharedAccessKeyName": "SendRule",
+        "SharedAccessKey": "whaHI53zGi5k5th/PpJWc6Tv/V1nd+X5OgTfHno1d9c="
+    }
+}

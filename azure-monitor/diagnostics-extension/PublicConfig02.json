@@ -1,0 +1,40 @@
+{
+    "PublicConfig": {
+        "WadCfg": {
+            "DiagnosticMonitorConfiguration": {
+                "overallQuotaInMB": 10000
+            },
+            "PerformanceCounters": {
+                "scheduledTransferPeriod": "PT1M",
+                "sinks": "MyEventHub",
+                "PerformanceCounterConfiguration": [
+                    {
+                        "counterSpecifier": "\\Processor(_Total)\\% Processor Time",
+                        "sampleRate": "PT3M"
+                    }
+                ]
+            },
+            "WindowsEventLog": {
+                "scheduledTransferPeriod": "PT1M",
+                "sinks": "MyEventHub",
+                    "DataSource": [
+                    {
+                        "name": "Application!*"
+                    }
+                ]
+            },
+            "SinksConfig": {
+                "Sink": [
+                    {
+                        "name": "MyEventHub",
+                        "EventHub": {
+                            "Url": "https://bwren-eventhub.servicebus.windows.net/insights-operational-logs",
+                            "SharedAccessKeyName": "SendRule"
+                        }
+                    }
+                ]
+            }
+        },
+        "StorageAccount": "bwlabdiag668"
+    }
+}

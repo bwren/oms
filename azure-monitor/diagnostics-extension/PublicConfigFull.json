@@ -1,0 +1,92 @@
+{
+  "StorageAccount": "bwlabdiag668",
+  "WadCfg": {
+    "DiagnosticMonitorConfiguration": {
+      "overallQuotaInMB": 5120,
+      "Metrics": {
+        "resourceId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-lab/providers/Microsoft.Compute/virtualMachines/bwlab-scom01",
+        "MetricAggregation": [
+          {
+            "scheduledTransferPeriod": "PT1H"
+          },
+          {
+            "scheduledTransferPeriod": "PT1M"
+          }
+        ]
+      },
+      "DiagnosticInfrastructureLogs": {
+        "scheduledTransferLogLevelFilter": "Error",
+        "scheduledTransferPeriod": "PT1M"
+      },
+      "PerformanceCounters": {
+        "scheduledTransferPeriod": "PT1M",
+        "PerformanceCounterConfiguration": [
+          {
+            "counterSpecifier": "\\Processor Information(_Total)\\% Processor Time",
+            "unit": "Percent",
+            "sampleRate": "PT60S"
+          },
+          {
+            "counterSpecifier": "\\Processor Information(_Total)\\% Privileged Time",
+            "unit": "Percent",
+            "sampleRate": "PT60S"
+          },
+          {
+            "counterSpecifier": "\\Processor Information(_Total)\\% User Time",
+            "unit": "Percent",
+            "sampleRate": "PT60S"
+          },
+          {
+            "counterSpecifier": "\\Processor Information(_Total)\\Processor Frequency",
+            "unit": "Count",
+            "sampleRate": "PT60S"
+          },
+          {
+            "counterSpecifier": "\\System\\Processes",
+            "unit": "Count",
+            "sampleRate": "PT60S"
+          },
+          {
+            "counterSpecifier": "\\Process(_Total)\\Thread Count",
+            "unit": "Count",
+            "sampleRate": "PT60S"
+          },
+          {
+            "counterSpecifier": "\\Process(_Total)\\Handle Count",
+            "unit": "Count",
+            "sampleRate": "PT60S"
+          },
+          {
+            "counterSpecifier": "\\System\\System Up Time",
+            "unit": "Count",
+            "sampleRate": "PT60S"
+          },
+          {
+            "counterSpecifier": "\\System\\Context Switches/sec",
+            "unit": "CountPerSecond",
+            "sampleRate": "PT60S"
+          },
+          {
+            "counterSpecifier": "\\System\\Processor Queue Length",
+            "unit": "Count",
+            "sampleRate": "PT60S"
+          }
+        ]
+      },
+      "WindowsEventLog": {
+        "scheduledTransferPeriod": "PT1M",
+        "DataSource": [
+          {
+            "name": "Application!*[System[(Level=1 or Level=2 or Level=3)]]"
+          },
+          {
+            "name": "System!*[System[(Level=1 or Level=2 or Level=3)]]"
+          }
+        ]
+      },
+      "Directories": {
+        "scheduledTransferPeriod": "PT1M"
+      }
+    }
+  }
+}

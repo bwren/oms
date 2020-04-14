@@ -1,0 +1,78 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vaults_bwrenVault_name": {
+            "defaultValue": "bwrenVault",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2016-10-01",
+            "name": "[parameters('vaults_bwrenVault_name')]",
+            "location": "eastus2",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                "accessPolicies": [
+                    {
+                        "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                        "objectId": "54847ceb-bab2-4e6c-8246-a7dd5c6998f0",
+                        "permissions": {
+                            "keys": [
+                                "get",
+                                "create",
+                                "delete",
+                                "list",
+                                "update",
+                                "import",
+                                "backup",
+                                "restore"
+                            ],
+                            "secrets": [
+                                "all"
+                            ]
+                        }
+                    }
+                ],
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false
+            },
+            "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults/providers/diagnosticSettings",
+              "apiVersion": "2017-05-01-preview",
+              "name": "[concat(parameters('vaults_bwrenVault_name'), '/Microsoft.Insights/ARM key vault setting')]",
+              "dependsOn": [
+                "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/Monitoring/providers/Microsoft.KeyVault/vaults/bwrenVault"
+              ],
+              "properties": {
+                "workspaceId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01",
+                "storageAccountId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/monitoring/providers/Microsoft.Storage/storageAccounts/bwmonitoringdata",
+                "eventHubAuthorizationRuleId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bwren-lab/providers/Microsoft.EventHub/namespaces/bwren-eventhub-eastus2/authorizationrules/RootManageSharedAccessKey",
+                "eventHubName": "bwren-eventhub-eastus2",
+                "logs": [
+                  {
+                    "category": "AuditEvent",
+                    "enabled": true
+                  }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+    ]
+}

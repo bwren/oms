@@ -1,0 +1,60 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {},
+	"variables": {},
+	"resources": [
+		{
+			"type": "Microsoft.Insights/diagnosticSettings",
+			"apiVersion": "2017-05-01-preview",
+			"name": "arm-diagnosticsetting-01",
+			"location": "global",
+			"properties": {
+				"workspaceId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01",
+				"storageAccountId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-lab/providers/Microsoft.Storage/storageAccounts/bwlabdiag810",
+				"eventHubAuthorizationRuleId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bwren-lab/providers/Microsoft.EventHub/namespaces/bwren-eventhub-eastus2/authorizationrules/RootManageSharedAccessKey",
+				"eventHubName": "bwren-eventhub-eastus2",
+				"logs": [
+					{
+						"category": "Administrative",
+						"enabled": true
+					},
+					{
+						"category": "Security",
+						"enabled": true
+					},
+					{
+						"category": "ServiceHealth",
+						"enabled": true
+					},
+					{
+						"category": "Alert",
+						"enabled": true
+					},
+					{
+						"category": "Recommendation",
+						"enabled": true
+					},
+					{
+						"category": "Policy",
+						"enabled": true
+					},
+					{
+						"category": "Autoscale",
+						"enabled": true
+					},
+					{
+						"category": "ResourceHealth",
+						"enabled": true
+					}
+				],
+        "metrics": [
+          {
+            "category": "AllMetrics",
+            "enabled": true
+          }
+        ]
+			}
+		}
+	]
+}

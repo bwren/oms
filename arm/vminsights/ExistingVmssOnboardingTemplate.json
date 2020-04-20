@@ -2,13 +2,13 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "VmResourceId": {
+        "VmssResourceId": {
             "type": "String",
             "metadata": {
                 "description": "VM Resource ID."
             }
         },
-        "VmLocation": {
+        "VmssLocation": {
             "type": "String",
             "metadata": {
                 "description": "The Virtual Machine Location."
@@ -28,7 +28,7 @@
         }
     },
     "variables": {
-        "VmName": "[split(parameters('VmResourceId'),'/')[8]]",
+        "VmssName": "[split(parameters('VmssResourceId'),'/')[8]]",
         "DaExtensionName": "[if(equals(toLower(parameters('osType')), 'windows'), 'DependencyAgentWindows', 'DependencyAgentLinux')]",
         "DaExtensionType": "[if(equals(toLower(parameters('osType')), 'windows'), 'DependencyAgentWindows', 'DependencyAgentLinux')]",
         "DaExtensionVersion": "9.5",
@@ -38,18 +38,18 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Compute/virtualMachines",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
             "apiVersion": "2018-10-01",
-            "name": "[variables('VmName')]",
-            "location": "[parameters('VmLocation')]",
+            "name": "[variables('VmssName')]",
+            "location": "[parameters('VmssLocation')]",
             "resources": [
                 {
                     "type": "extensions",
                     "apiVersion": "2018-10-01",
                     "name": "[variables('DaExtensionName')]",
-                    "location": "[parameters('VmLocation')]",
+                    "location": "[parameters('VmssLocation')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Compute/VirtualMachines/', variables('VmName'))]"
+                        "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('VmssName'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
@@ -62,9 +62,9 @@
                     "type": "extensions",
                     "apiVersion": "2018-10-01",
                     "name": "[variables('MmaExtensionName')]",
-                    "location": "[parameters('VmLocation')]",
+                    "location": "[parameters('VmssLocation')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Compute/VirtualMachines/', variables('VmName'))]"
+                        "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('VmssName'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
@@ -73,7 +73,7 @@
                         "autoUpgradeMinorVersion": "true",
                         "settings": {
                             "workspaceId": "[reference(parameters('WorkspaceResourceId'), '2015-03-20').customerId]",
-                            "azureResourceId": "[parameters('VmResourceId')]",
+                            "azureResourceId": "[parameters('VmssResourceId')]",
                             "stopOnMultipleConnections": "true"
                         },
                         "protectedSettings": {

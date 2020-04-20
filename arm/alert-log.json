@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "variables": {
+        "alertLocation": "westus",
+        "alertName": "samplelogalert",
+        "alertDescription": "Sample log query alert",
+        "alertStatus": "true",
+        "alertSource":{
+            "Query":"Event | where EventLevelName == \"Error\" | summarize count() by Computer",
+            "SourceId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01",
+            "Type":"ResultCount"
+        },
+        "alertSchedule":{
+            "Frequency": 15,
+            "Time": 60
+        },
+        "alertActions":{
+            "SeverityLevel": "4"
+        },
+        "alertTrigger":{
+            "Operator":"GreaterThan",
+            "Threshold":"1"
+        },
+        "actionGrp":{
+            "ActionGroup": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-samples-arm/providers/microsoft.insights/actionGroups/ARM samples group 01",
+            "Subject": "Mail bwren"
+        }
+    },
+    "resources":[ {
+        "name":"[variables('alertName')]",
+        "type":"Microsoft.Insights/scheduledQueryRules",
+        "apiVersion": "2018-04-16",
+        "location": "[variables('alertLocation')]",
+        "properties":{
+            "description": "[variables('alertDescription')]",
+            "enabled": "[variables('alertStatus')]",
+            "source": {
+                "query": "[variables('alertSource').Query]",
+                "dataSourceId": "[variables('alertSource').SourceId]",
+                "queryType":"[variables('alertSource').Type]"
+            },
+            "schedule":{
+                "frequencyInMinutes": "[variables('alertSchedule').Frequency]",
+                "timeWindowInMinutes": "[variables('alertSchedule').Time]"
+            },
+            "action":{
+                "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                "severity":"[variables('alertActions').SeverityLevel]",
+                "aznsAction":{
+                    "actionGroup":"[array(variables('actionGrp').ActionGroup)]",
+                    "emailSubject":"[variables('actionGrp').Subject]"
+                },
+                "trigger":{
+                    "thresholdOperator":"[variables('alertTrigger').Operator]",
+                    "threshold":"[variables('alertTrigger').Threshold]"
+                }
+            }
+        }
+    } ]
+}

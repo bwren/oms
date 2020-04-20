@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Multi-resource metric alert via Azure Resource Manager template"
+        },
+        "alertDescription": {
+            "value": "New Multi-resource metric alert created via template"
+        },
+        "alertSeverity": {
+            "value":3
+        },
+        "isEnabled": {
+            "value": true
+        },
+        "targetResourceGroup":{
+            "value": [
+                "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-samples-arm"
+            ]
+        },
+        "targetResourceRegion":{
+            "value": "WestUS"
+        },
+        "targetResourceType":{
+            "value": "Microsoft.Storage/storageAccounts"
+        },
+        "metricName": {
+            "value": "SuccessE2ELatency"
+        },
+        "operator": {
+          "value": "GreaterThan"
+        },
+        "threshold": {
+            "value": "250"
+        },
+        "timeAggregation": {
+            "value": "Average"
+        },
+        "actionGroupId": {
+            "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.insights/actiongroups/arm samples group 01"
+        }
+    }
+}

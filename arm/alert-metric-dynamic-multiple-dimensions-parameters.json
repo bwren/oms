@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Dynamic threshold - Multiple dimensions"
+        },
+        "alertDescription": {
+            "value": "New multi-dimensional metric alert with Dynamic Thresholds created via template (Replace with your alert description)"
+        },
+        "alertSeverity": {
+            "value":3
+        },
+        "isEnabled": {
+            "value": true
+        },
+        "resourceId": {
+            "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-samples-arm/providers/Microsoft.Storage/storageAccounts/armsamples01"
+        },
+        "criterion": {
+            "value": {
+                    "criterionType": "DynamicThresholdCriterion",
+                    "name": "1st criterion",
+                    "metricName": "Transactions",
+                    "dimensions": [
+                        {
+                            "name":"ResponseType",
+                            "operator": "Include",
+                            "values": ["*"]
+                        },
+                        {
+                            "name":"ApiName",
+                            "operator": "Include",
+                            "values": ["GetBlob", "PutBlob"]
+                        }
+                    ],
+                    "operator": "GreaterOrLessThan",
+                    "alertSensitivity": "Medium",
+                    "failingPeriods": {
+                        "numberOfEvaluationPeriods": "4",
+                        "minFailingPeriodsToAlert": "3"
+                    },
+                    "timeAggregation": "Total"
+                }
+        },
+        "actionGroupId": {
+            "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.insights/actiongroups/arm samples group 01"
+        }
+    }
+}

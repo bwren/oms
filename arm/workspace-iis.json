@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+              "description": "Name of the workspace."
+            }
+        },
+        "location": {
+          "type": "string",
+          "allowedValues": [
+            "australiacentral", 
+            "australiaeast", 
+            "australiasoutheast", 
+            "brazilsouth",
+            "canadacentral", 
+            "centralindia", 
+            "centralus", 
+            "eastasia", 
+            "eastus", 
+            "eastus2", 
+            "francecentral", 
+            "japaneast", 
+            "koreacentral", 
+            "northcentralus", 
+            "northeurope", 
+            "southafricanorth", 
+            "southcentralus", 
+            "southeastasia", 
+            "uksouth", 
+            "ukwest", 
+            "westcentralus", 
+            "westeurope", 
+            "westus", 
+            "westus2"
+          ],
+          "metadata": {
+            "description": "Specifies the location in which to create the workspace."
+          }
+        }
+    },
+    "resources": [
+    {
+        "apiVersion": "2017-03-15-preview",
+        "type": "Microsoft.OperationalInsights/workspaces",
+        "name": "[parameters('workspaceName')]",
+        "location": "[parameters('location')]",
+        "resources": [
+            {
+                "apiVersion": "2015-11-01-preview",
+                "type": "datasources",
+                "name": "IISLog",
+                "dependsOn": [
+                    "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                ],
+                "kind": "IISLogs",
+                "properties": {
+                    "state": "OnPremiseEnabled"
+                }
+            }
+        ]
+      }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "WorkspaceResourceId": {
+            "type": "String",
+            "metadata": {
+                "description": "Workspace Resource ID."
+            }
+        },
+        "WorkspaceLocation": {
+            "type": "String",
+            "metadata": {
+                "description": "Workspace Location."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "VMISolutionDeployment",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "location": "[parameters('WorkspaceLocation')]",
+                            "name": "[concat('VMInsights', '(', split(parameters('WorkspaceResourceId'),'/')[8], ')')]",
+                            "properties": {
+                                "workspaceResourceId": "[parameters('WorkspaceResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[concat('VMInsights', '(', split(parameters('WorkspaceResourceId'),'/')[8], ')')]",
+                                "product": "[concat('OMSGallery/', 'VMInsights')]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[split(parameters('WorkspaceResourceId'),'/')[2]]",
+            "resourceGroup": "[split(parameters('WorkspaceResourceId'),'/')[4]]"
+        }
+    ],
+    "outputs": {}
+}

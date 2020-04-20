@@ -1,0 +1,32 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": { },
+    "variables": {
+        "VmName": "bw-win-02"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "<parentVmResource>/OMSExtension",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                "type": "MicrosoftMonitoringAgent",
+                "typeHandlerVersion": "1.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "workspaceId": "7a13c6ab-0aa6-4fa7-97a7-2b2c8dad6b3d"
+                },
+                "protectedSettings": {
+                    "workspaceKey": "8ZoEEMUV5zB5Jt+u/Y+AM1EVpzucLfSxrW0Ui+r2m5bFRN8kfdSjWI/wqjGsxk/iyiX5EVNYx42DSVlkqwzJFQ=="
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

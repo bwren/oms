@@ -1,0 +1,98 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_bw_win_02_name": {
+            "defaultValue": "bw-win-02",
+            "type": "String"
+        },
+        "disks_bw_win_02_disk1_4e44f3dc24504b2c9d264ac3e34fb6a6_externalid": {
+            "defaultValue": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/BW-LAB/providers/Microsoft.Compute/disks/bw-win-02_disk1_4e44f3dc24504b2c9d264ac3e34fb6a6",
+            "type": "String"
+        },
+        "networkInterfaces_bw_win_02734_externalid": {
+            "defaultValue": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-lab/providers/Microsoft.Network/networkInterfaces/bw-win-02734",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "name": "[parameters('virtualMachines_bw_win_02_name')]",
+            "location": "eastus",
+            "tags": {
+                "Managed": "True"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[concat(parameters('virtualMachines_bw_win_02_name'), '_disk1_4e44f3dc24504b2c9d264ac3e34fb6a6')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {}
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_bw_win_02_name')]",
+                    "adminUsername": "bwren",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_bw_win_02734_externalid')]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "https://bwlabdiag.blob.core.windows.net/"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "<parentVmResource>/OMSExtension",
+                    "apiVersion": "2015-06-15",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachines_bw_win_02_name'))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "workspaceId": "7a13c6ab-0aa6-4fa7-97a7-2b2c8dad6b3d"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "8ZoEEMUV5zB5Jt+u/Y+AM1EVpzucLfSxrW0Ui+r2m5bFRN8kfdSjWI/wqjGsxk/iyiX5EVNYx42DSVlkqwzJFQ=="
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -27,14 +27,14 @@
     "resources":[ 
         {
             "type":"Microsoft.Insights/scheduledQueryRules",
-            "name":"Sample log query alert",
+            "name":"Sample metric measurement log query alert",
             "apiVersion": "2018-04-16",
             "location": "[parameters('location')]",
             "properties":{
-                "description": "Sample log query alert",
+                "description": "Sample metric measurement query alert rule",
                 "enabled": "true",
                 "source": {
-                    "query": "Event | where EventLevelName == \"Error\" | summarize count() by Computer",
+                    "query": "Event | where EventLevelName == \"Error\" | summarize AggregatedValue = count() by bin(TimeGenerated,1h), Computer",
                     "dataSourceId": "[parameters('sourceId')]",
                     "queryType":"ResultCount"
                 },
@@ -47,12 +47,17 @@
                     "severity": "4",
                     "aznsAction":{
                         "actionGroup": "[array(parameters('actionGroupId'))]",
-                        "emailSubject": "Alert mail subject",
-                        "customWebhookPayload":"{ \"alertname\":\"#alertrulename\", \"IncludeSearchResults\":true }"
+                        "emailSubject": "Alert mail subject"
                     },
                     "trigger":{
                         "thresholdOperator": "GreaterThan",
-                        "threshold": 1
+                        "threshold": 10,
+                        "metricTrigger":{
+                            "thresholdOperator": "Equal",
+                            "threshold": 1,
+                            "metricTriggerType": "Consecutive",
+                            "metricColumn": "Computer"
+                        }
                     }
                 }
             }

@@ -10,32 +10,6 @@
         },
         "location": {
           "type": "string",
-          "allowedValues": [
-            "australiacentral", 
-            "australiaeast", 
-            "australiasoutheast", 
-            "brazilsouth",
-            "canadacentral", 
-            "centralindia", 
-            "centralus", 
-            "eastasia", 
-            "eastus", 
-            "eastus2", 
-            "francecentral", 
-            "japaneast", 
-            "koreacentral", 
-            "northcentralus", 
-            "northeurope", 
-            "southafricanorth", 
-            "southcentralus", 
-            "southeastasia", 
-            "uksouth", 
-            "ukwest", 
-            "westcentralus", 
-            "westeurope", 
-            "westus", 
-            "westus2"
-          ],
           "metadata": {
             "description": "Specifies the location in which to create the workspace."
           }
@@ -51,35 +25,57 @@
             {
                 "apiVersion": "2015-11-01-preview",
                 "type": "datasources",
-                "name": "LinuxPerformance",
+                "name": "LinuxPerformanceLogicalDisk",
                 "dependsOn": [
                     "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
                 ],
                 "kind": "LinuxPerformanceObject",
                 "properties": {
-                    "performanceCounters": [
-                    {
-                        "counterName": "% Used Inodes"
-                    },
-                    {
-                        "counterName": "Free Megabytes"
-                    },
-                    {
-                        "counterName": "% Used Space"
-                    },
-                    {
-                        "counterName": "Disk Transfers/sec"
-                    },
-                    {
-                        "counterName": "Disk Reads/sec"
-                    },
-                    {
-                        "counterName": "Disk Writes/sec"
-                    }
-                    ],
                     "objectName": "Logical Disk",
                     "instanceName": "*",
-                    "intervalSeconds": 10
+                    "intervalSeconds": 10,
+                    "performanceCounters": [
+                        {
+                            "counterName": "% Used Inodes"
+                        },
+                        {
+                            "counterName": "Free Megabytes"
+                        },
+                        {
+                            "counterName": "% Used Space"
+                        },
+                        {
+                            "counterName": "Disk Transfers/sec"
+                        },
+                        {
+                            "counterName": "Disk Reads/sec"
+                        },
+                        {
+                            "counterName": "Disk Writes/sec"
+                        }
+                    ]
+                }
+            },
+            {
+                "apiVersion": "2015-11-01-preview",
+                "type": "datasources",
+                "name": "LinuxPerformanceProcessor",
+                "dependsOn": [
+                    "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                ],
+                "kind": "LinuxPerformanceObject",
+                "properties": {
+                    "objectName": "Processor",
+                    "instanceName": "*",
+                    "intervalSeconds": 10,
+                    "performanceCounters": [
+                        {
+                            "counterName": "% Processor Time"
+                        },
+                        {
+                            "counterName": "% Privileged Time"
+                        }
+                    ]
                 }
             }
         ]

@@ -10,32 +10,6 @@
         },
         "location": {
           "type": "string",
-          "allowedValues": [
-            "australiacentral", 
-            "australiaeast", 
-            "australiasoutheast", 
-            "brazilsouth",
-            "canadacentral", 
-            "centralindia", 
-            "centralus", 
-            "eastasia", 
-            "eastus", 
-            "eastus2", 
-            "francecentral", 
-            "japaneast", 
-            "koreacentral", 
-            "northcentralus", 
-            "northeurope", 
-            "southafricanorth", 
-            "southcentralus", 
-            "southeastasia", 
-            "uksouth", 
-            "ukwest", 
-            "westcentralus", 
-            "westeurope", 
-            "westus", 
-            "westus2"
-          ],
           "metadata": {
             "description": "Specifies the location in which to create the workspace."
           }
@@ -43,8 +17,8 @@
     },
     "resources": [
     {
-        "apiVersion": "2017-03-15-preview",
         "type": "Microsoft.OperationalInsights/workspaces",
+        "apiVersion": "2017-03-15-preview",
         "name": "[parameters('workspaceName')]",
         "location": "[parameters('location')]",
         "resources": [

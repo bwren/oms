@@ -5,40 +5,14 @@
         "workspaceName": {
             "type": "string",
             "metadata": {
-              "description": "Name of the workspace."
+                "description": "Name of the workspace."
             }
         },
         "location": {
-          "type": "string",
-          "allowedValues": [
-            "australiacentral", 
-            "australiaeast", 
-            "australiasoutheast", 
-            "brazilsouth",
-            "canadacentral", 
-            "centralindia", 
-            "centralus", 
-            "eastasia", 
-            "eastus", 
-            "eastus2", 
-            "francecentral", 
-            "japaneast", 
-            "koreacentral", 
-            "northcentralus", 
-            "northeurope", 
-            "southafricanorth", 
-            "southcentralus", 
-            "southeastasia", 
-            "uksouth", 
-            "ukwest", 
-            "westcentralus", 
-            "westeurope", 
-            "westus", 
-            "westus2"
-          ],
-          "metadata": {
-            "description": "Specifies the location in which to create the workspace."
-          }
+            "type": "string",
+            "metadata": {
+            "description": "Location of the workspace."
+            }
         }
     },
     "resources": [

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "vaultName": {
+        "value": "bwarmvault"
+      },
+      "dbName": {
+        "value": "bw-aem-cosmos"
+      },
+      "workspaceId": {
+        "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01"
+      },
+      "storageAccountId": {
+        "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/monitoring/providers/Microsoft.Storage/storageAccounts/bwmonitoringdata"
+      },
+      "eventHubAuthorizationRuleId": {
+        "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bwren-lab/providers/Microsoft.EventHub/namespaces/bwren-eventhub-eastus2/authorizationrules/RootManageSharedAccessKey"
+      },
+      "eventHubName": {
+        "value": "bwren-eventhub-eastus2"
+      }
+  }
+}

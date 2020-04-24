@@ -2,7 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vaultName": {
+        "serverName": {
+            "type": "String"
+        },
+        "dbName": {
             "type": "String"
         },
         "workspaceId": {
@@ -22,35 +25,9 @@
     "variables": {},
     "resources": [
         {
-          "type": "Microsoft.KeyVault/vaults/providers/diagnosticSettings",
+          "type": "microsoft.sql/servers/databases/providers/diagnosticSettings",
           "apiVersion": "2017-05-01-preview",
-          "name": "[concat(parameters('vaultName'), '/Microsoft.Insights/Key vault diagnostic setting')]",
-          "dependsOn": [
-            
-          ],
-          "properties": {
-            "workspaceId": "[parameters('workspaceId')]",
-            "storageAccountId": "[parameters('storageAccountId')]",
-            "eventHubAuthorizationRuleId": "[parameters('eventHubAuthorizationRuleId')]",
-            "eventHubName": "[parameters('eventHubName')]",
-            "logs": [
-              {
-                "category": "AuditEvent",
-                "enabled": true
-              }
-            ],
-            "metrics": [
-              {
-                "category": "AllMetrics",
-                "enabled": true
-              }
-            ]
-          }
-        },
-        {
-          "type": "Microsoft.DocumentDB/databaseAccounts/providers/diagnosticSettings",
-          "apiVersion": "2017-05-01-preview",
-          "name": "[concat(parameters('vaultName'), '/Microsoft.Insights/Key vault diagnostic setting')]",
+          "name": "[concat(parameters('serverName'),'/',parameters('dbName'),'/microsoft.insights/SQL diagnostic setting')]",
           "dependsOn": [
             
           ],

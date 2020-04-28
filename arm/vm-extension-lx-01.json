@@ -1,0 +1,183 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the virtual machine."
+      }
+    },
+    "vmId": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource ID of the virtual machine."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the virtual machine."
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the storage account."
+      }
+    },
+    "storageSasToken": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource ID of the storage account."
+      }
+    },
+    "eventHubUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "URL of the event hub."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2018-10-01",
+      "name": "[parameters('vmName')]",
+      "location": "[parameters('location')]",
+      "resources": [
+          {
+              "type": "Microsoft.Compute/virtualMachines/extensions",
+              "name": "[concat(parameters('vmName'), '/Microsoft.Insights.VMDiagnosticsSettings')]",
+              "apiVersion": "2015-06-15",
+              "location": "[parameters('location')]",
+              "dependsOn": [
+                  "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+              ],
+              "properties": {
+                  "publisher": "Microsoft.Azure.Diagnostics",
+                  "type": "LinuxDiagnostic",
+                  "typeHandlerVersion": "3.0",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {
+                    "StorageAccount": "[parameters('storageAccountName')]",
+                    "ladCfg": {
+                      "sampleRateInSeconds": 15,
+                      "diagnosticMonitorConfiguration": 
+                      {
+                        "performanceCounters": 
+                        {
+                          "sinks": "MyMetricEventHub,MyJsonMetricsBlob",
+                          "performanceCounterConfiguration": [
+                            {
+                              "unit": "Percent",
+                              "type": "builtin",
+                              "counter": "PercentProcessorTime",
+                              "counterSpecifier": "/builtin/Processor/PercentProcessorTime",
+                              "annotation": [
+                                {
+                                  "locale": "en-us",
+                                  "displayName": "Aggregate CPU %utilization"
+                                }
+                              ],
+                              "condition": "IsAggregate=TRUE",
+                              "class": "Processor"
+                            },
+                            {
+                              "unit": "Bytes",
+                              "type": "builtin",
+                              "counter": "UsedSpace",
+                              "counterSpecifier": "/builtin/FileSystem/UsedSpace",
+                              "annotation": [
+                                {
+                                  "locale": "en-us",
+                                  "displayName": "Used disk space on /"
+                                }
+                              ],
+                              "condition": "Name=\"/\"",
+                              "class": "Filesystem"
+                            }
+                          ]
+                        },
+                        "metrics": {
+                          "metricAggregation": [
+                            {
+                              "scheduledTransferPeriod": "PT1H"
+                            },
+                            {
+                              "scheduledTransferPeriod": "PT1M"
+                            }
+                          ],
+                          "resourceId": "[parameters('vmId')]"
+                        },
+                        "eventVolume": "Large",
+                        "syslogEvents": {
+                          "sinks": "MySyslogJsonBlob,MyLoggingEventHub",
+                          "syslogEventConfiguration": {
+                            "LOG_USER": "LOG_INFO"
+                          }
+                        }
+                      }
+                    },
+                    "perfCfg": [
+                      {
+                        "query": "SELECT PercentProcessorTime, PercentIdleTime FROM SCX_ProcessorStatisticalInformation WHERE Name='_TOTAL'",
+                        "table": "LinuxCpu",
+                        "frequency": 60,
+                        "sinks": "MyLinuxCpuJsonBlob,MyLinuxCpuEventHub"
+                      }
+                    ],
+                    "fileLogs": [
+                      {
+                        "file": "/var/log/myladtestlog",
+                        "table": "MyLadTestLog",
+                        "sinks": "MyFilelogJsonBlob,MyLoggingEventHub"
+                      }
+                    ]
+                  },
+                  "protectedSettings": {
+                    "storageAccountName": "yourdiagstgacct",
+                    "storageAccountSasToken": "[parameters('storageSasToken')]",
+                    "sinksConfig": {
+                      "sink": [
+                        {
+                          "name": "MySyslogJsonBlob",
+                          "type": "JsonBlob"
+                        },
+                        {
+                          "name": "MyFilelogJsonBlob",
+                          "type": "JsonBlob"
+                        },
+                        {
+                          "name": "MyLinuxCpuJsonBlob",
+                          "type": "JsonBlob"
+                        },
+                        {
+                          "name": "MyJsonMetricsBlob",
+                          "type": "JsonBlob"
+                        },
+                        {
+                          "name": "MyLinuxCpuEventHub",
+                          "type": "EventHub",
+                          "sasURL": "[parameters('eventHubUrl')]"
+                        },
+                        {
+                          "name": "MyMetricEventHub",
+                          "type": "EventHub",
+                          "sasURL": "[parameters('eventHubUrl')]"
+                        },
+                        {
+                          "name": "MyLoggingEventHub",
+                          "type": "EventHub",
+                          "sasURL": "[parameters('eventHubUrl')]"
+                        }
+                      ]
+                    }
+                  }
+              }
+          }
+        ]
+    }
+  ]
+}

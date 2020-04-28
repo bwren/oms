@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "vmName": {
+        "value": "bw-arm-lx-01"
+      },
+      "location": {
+        "value": "westus"
+      },
+      "workspaceId": {
+        "value": "7a13c6ab-0aa6-4fa7-97a7-2b2c8dad6b3d"
+      },
+      "workspaceKey": {
+        "value": "Nlt+4d6ZotJ8A30ukDo3oxfixZ5axv1xobXgKR17kbVdtacU6cEf+SNo2TdHGVKTsZHZd1W9QKRXfh+ToVR9dA=="
+      }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "workbookDisplayName": {
+        "value": "My hello world 3"
+      },
+      "workbookType": {
+        "value": "workbook"
+      },
+      "workbookSourceId": {
+        "value": "Azure Monitor"
+      }
+  }
+}

@@ -2,11 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "WorkspaceResourceId": {
-            "value": "/subscriptions/<SubscriptionId>/resourceGroups/<ResourceGroup>/providers/Microsoft.OperationalInsights/workspaces/<WorkspaceName>"
+        "workspaceResourceId": {
+            "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-apm-21/providers/microsoft.operationalinsights/workspaces/bw-apm-21"
         },
-        "WorkspaceLocation": {
-            "value": "<WorkspaceLocation>"
+        "workspaceLocation": {
+            "value": "westcentralus"
         }
     }
 }

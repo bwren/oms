@@ -2,14 +2,11 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-      "sourceId": {
-        "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01"
+      "workspaceName": {
+        "value": "bw-sample-customlog"
       },
       "location": {
-        "value": "eastus"
-      },
-      "actionGroupId": {
-        "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-samples-arm/providers/microsoft.insights/actionGroups/ARM samples group 01"
+        "value": "westus"
       }
   }
 }

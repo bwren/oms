@@ -50,6 +50,36 @@
                 workspace('workspace3').SecurityEvent,
                 | where EventID == 4625"
           }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2017-04-26-preview",
+          "name": "Parameterized function",
+            "dependsOn": [
+              "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
+            "properties": {
+              "etag": "*",
+              "displayName": "Unavailable computers function",
+              "category": "Samples",
+              "FunctionAlias": "UnavailableComputers",
+              "FunctionParameters": "argSpan: timespan",
+              "query": " Heartbeat | summarize LastHeartbeat=max(TimeGenerated) by Computer| where LastHeartbeat < ago(argSpan)"
+          }
+        },
+        {
+          "type": "savedSearches",
+          "apiVersion": "2017-04-26-preview",
+          "name": "Query using function",
+            "dependsOn": [
+              "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
+            "properties": {
+              "etag": "*",
+              "displayName": "Unavailable computers",
+              "category": "Samples",
+              "query": "UnavailableComputers(7days)"
+          }
         }
       ]
     }

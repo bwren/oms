@@ -1,0 +1,15 @@
+{
+ "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+ "contentVersion": "1.0.0.0",
+ "parameters": {
+   "settingName": {
+     "value": "OrganizationalLogging"
+   },
+   "eventHubAuthorizationRuleId": {
+     "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/EventHub/providers/Microsoft.EventHub/namespaces/bwreneh/authorizationrules/RootManageSharedAccessKey"
+   },
+   "eventHubName": {
+     "value": "insights-operational-logs"
+     }
+   }
+ }

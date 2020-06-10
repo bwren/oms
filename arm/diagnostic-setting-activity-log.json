@@ -1,19 +1,34 @@
 {
-	"$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",
-	"parameters": {},
-	"variables": {},
+    "parameters": {
+        "settingName": {
+            "type": "String"
+        },
+        "workspaceId": {
+            "type": "String"
+        },
+        "storageAccountId": {
+            "type": "String"
+        },
+        "eventHubAuthorizationRuleId": {
+            "type": "String"
+        },
+        "eventHubName": {
+            "type": "String"
+        }
+
+    },
 	"resources": [
 		{
 			"type": "Microsoft.Insights/diagnosticSettings",
 			"apiVersion": "2017-05-01-preview",
-			"name": "arm-diagnosticsetting-01",
-			"location": "global",
+			"name": "[parameters('settingName')]",
 			"properties": {
-				"workspaceId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01",
-				"storageAccountId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-lab/providers/Microsoft.Storage/storageAccounts/bwlabdiag810",
-				"eventHubAuthorizationRuleId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bwren-lab/providers/Microsoft.EventHub/namespaces/bwren-eventhub-eastus2/authorizationrules/RootManageSharedAccessKey",
-				"eventHubName": "bwren-eventhub-eastus2",
+				"workspaceId": "[parameters('workspaceId')]",
+				"storageAccountId": "[parameters('storageAccountId')]",
+				"eventHubAuthorizationRuleId": "[parameters('eventHubAuthorizationRuleId')]",
+				"eventHubName": "[parameters('eventHubName')]",
 				"logs": [
 					{
 						"category": "Administrative",
@@ -47,13 +62,7 @@
 						"category": "ResourceHealth",
 						"enabled": true
 					}
-				],
-        "metrics": [
-          {
-            "category": "AllMetrics",
-            "enabled": true
-          }
-        ]
+				]
 			}
 		}
 	]

@@ -1,12 +1,9 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-      "vaultName": {
-        "value": "bwarmvault"
-      },
       "settingName": {
-        "value": "Send to all destinations"
+          "value": "Send to all locations with ARM"
       },
       "workspaceId": {
         "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01"

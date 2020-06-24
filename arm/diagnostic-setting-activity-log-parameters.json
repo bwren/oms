@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
       "settingName": {
-          "value": "Send to all locations with ARM"
+        "value": "Send to all locations with ARM"
       },
       "workspaceId": {
         "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01"

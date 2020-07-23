@@ -1,0 +1,103 @@
+{
+    "value": [
+        {
+            "properties": {
+                "immutableId": "dcr-0ab5ea9d37f34bcab49ae8f3dd23837d",
+                "dataSources": {
+                    "performanceCounters": [
+                        {
+                            "streams": [
+                                "Microsoft-InsightsMetrics"
+                            ],
+                            "scheduledTransferPeriod": "PT1M",
+                            "samplingFrequencyInSeconds": 10,
+                            "counterSpecifiers": [
+                                "CPU",
+                                "Memory",
+                                "Disk",
+                                "Network"
+                            ],
+                            "name": "perfCounterDataSource10"
+                        }
+                    ]
+                },
+                "destinations": {
+                    "logAnalytics": [
+                        {
+                            "workspaceResourceId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-ama/providers/microsoft.operationalinsights/workspaces/bw-ama",
+                            "workspaceId": "e177988e-a954-4a11-8113-32a95fccbdd7",
+                            "name": "la--568288752"
+                        }
+                    ],
+                    "azureMonitorMetrics": {
+                        "name": "azureMonitorMetrics-default"
+                    }
+                },
+                "dataFlows": [
+                    {
+                        "streams": [
+                            "Microsoft-InsightsMetrics"
+                        ],
+                        "destinations": [
+                            "azureMonitorMetrics-default",
+                            "la--568288752"
+                        ]
+                    }
+                ],
+                "provisioningState": "Succeeded"
+            },
+            "location": "eastus",
+            "id": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-ama/providers/Microsoft.Insights/dataCollectionRules/preview-collection-02",
+            "name": "preview-collection-02",
+            "type": "Microsoft.Insights/dataCollectionRules",
+            "etag": "\"00007c00-0000-0100-0000-5f11d1c50000\""
+        },
+        {
+            "properties": {
+                "immutableId": "dcr-1a837afe5f50424abe0966167e44ee7c",
+                "dataSources": {
+                    "windowsEventLogs": [
+                        {
+                            "streams": [
+                                "Microsoft-WindowsEvent"
+                            ],
+                            "scheduledTransferPeriod": "PT5M",
+                            "xPathQueries": [
+                                "Application!*[System[(Level=1 or Level=2 or Level=3)]]",
+                                "System!*[System[(Level=1 or Level=2)]]"
+                            ],
+                            "name": "eventLogsDataSource"
+                        }
+                    ]
+                },
+                "destinations": {
+                    "logAnalytics": [
+                        {
+                            "workspaceResourceId": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-ama/providers/microsoft.operationalinsights/workspaces/bw-ama",
+                            "workspaceId": "e177988e-a954-4a11-8113-32a95fccbdd7",
+                            "name": "la--568288752"
+                        }
+                    ]
+                },
+                "dataFlows": [
+                    {
+                        "streams": [
+                            "Microsoft-WindowsEvent"
+                        ],
+                        "destinations": [
+                            "la--568288752"
+                        ]
+                    }
+                ],
+                "provisioningState": "Succeeded"
+            },
+            "location": "eastus",
+            "tags": {},
+            "id": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-ama/providers/Microsoft.Insights/dataCollectionRules/production-default",
+            "name": "production-default",
+            "type": "Microsoft.Insights/dataCollectionRules",
+            "etag": "\"00007700-0000-0100-0000-5f11d0b10000\""
+        }
+    ],
+    "nextLink": null
+}

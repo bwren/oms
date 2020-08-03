@@ -3,16 +3,16 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmResourceId": {
-            "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/bw-samples-arm/providers/Microsoft.Compute/virtualMachines/bw-arm-lx-01"
+            "value": "/subscriptions/<SubscriptionId>/resourceGroups/<ResourceGroup>/providers/Microsoft.Compute/virtualMachines/<VirtualMachineName>"
         },
         "vmLocation": {
-            "value": "westus"
+            "value": "<VirtualMachineLocation>"
         },
         "osType": {
-            "value": "linux"
+            "value": "<OSType>"
         },
         "workspaceResourceId": {
-            "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01"
+            "value": "/subscriptions/<SubscriptionId>/resourceGroups/<ResourceGroup>/providers/Microsoft.OperationalInsights/workspaces/<WorkspaceName>"
         }
     }
 }

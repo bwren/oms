@@ -7,12 +7,13 @@ import base64
 
 # Update the customer ID to your Log Analytics workspace ID
 customer_id = '73308ade-39f9-41c5-aa82-28c9b614d0e2'
+# customer_id = 'c9322874-1265-4be5-85bb-a7c783c2485a'
 
 # For the shared key, use either the primary or the secondary Connected Sources client authentication key   
 shared_key = "lBO3UFZIB0mMag1vul/wGan8Ci4ncCSrSoe0Y0KH2fX7b10fWmiZ9TuEoh+ixoaJUhZ7UrAnDusrgScEXzFBIA=="
 
 # The log type is the name of the event that is being submitted
-log_type = 'WebMonitorTest'
+log_type = 'PropertyTest2'
 
 # An example JSON web monitor object
 json_data = [{
@@ -24,9 +25,7 @@ json_data = [{
     "duration": 3600,
     "warning_Threshold": 0,
     "critical_Threshold": 0,
-    "IsActive": "true",
-    "Computer": "myComputer",
-    "ComputerName": "myComputerName"
+    "IsActive": "true"
 },
 {   
     "slot_ID": 67890,
@@ -37,9 +36,7 @@ json_data = [{
     "duration": 3600,
     "warning_Threshold": 0,
     "critical_Threshold": 0,
-    "IsActive": "false",
-    "Computer": "myComputer",
-    "ComputerName": "myComputerName"
+    "IsActive": "false"
 }]
 body = json.dumps(json_data)
 
@@ -75,6 +72,7 @@ def post_data(customer_id, shared_key, body, log_type):
     }
 
     response = requests.post(uri,data=body, headers=headers)
+    print("Response code: {}".format(response.status_code))
     if (response.status_code >= 200 and response.status_code <= 299):
         print('Accepted')
     else:

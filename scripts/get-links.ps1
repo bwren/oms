@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [ValidateScript({ Test-Path $_ })]
-    $reporoot = 'C:\Git\AzurePS\azure-docs-powershell\azureps-cmdlets-docs\ResourceManager\docs-conceptual'
+    $reporoot = 'C:\Users\bwren\Git\azure-docs-pr\articles\azure-monitor'
 )
 
 function resolveURL {

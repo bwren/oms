@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
       "workspaceName": {
@@ -12,73 +12,23 @@
   "resources": [
     {
       "type": "Microsoft.OperationalInsights/workspaces",
-      "apiVersion": "2017-03-15-preview",
+      "apiVersion": "2020-08-01",
       "name": "[parameters('workspaceName')]",
       "location": "[parameters('location')]",
       "resources": [
         {
           "type": "savedSearches",
-          "apiVersion": "2015-03-20",
+          "apiVersion": "2020-08-01",
           "name": "VMSS query",
           "dependsOn": [
             "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
           ],
           "properties": {
             "eTag": "*",
+            "displayName": "VMSS Instance Count 2",
             "category": "VMSS",
-            "displayName": "VMSS Instance Count",
             "query": "Event | where Source == \"ServiceFabricNodeBootstrapAgent\" | summarize AggregatedValue = count() by Computer",
             "version": 1
-          }
-        },
-        {
-          "type": "savedSearches",
-          "apiVersion": "2017-04-26-preview",
-          "name": "Cross workspace query",
-            "dependsOn": [
-              "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
-            ],
-            "properties": {
-              "etag": "*",
-              "displayName": "failedLogOnEvents",
-              "category": "Security",
-              "FunctionAlias": "failedlogonsecurityevents",
-              "query": "
-                union withsource=SourceWorkspace
-                workspace('workspace1').SecurityEvent,
-                workspace('workspace2').SecurityEvent,
-                workspace('workspace3').SecurityEvent,
-                | where EventID == 4625"
-          }
-        },
-        {
-          "type": "savedSearches",
-          "apiVersion": "2017-04-26-preview",
-          "name": "Parameterized function",
-            "dependsOn": [
-              "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
-            ],
-            "properties": {
-              "etag": "*",
-              "displayName": "Unavailable computers function",
-              "category": "Samples",
-              "FunctionAlias": "UnavailableComputers",
-              "FunctionParameters": "argSpan: timespan",
-              "query": " Heartbeat | summarize LastHeartbeat=max(TimeGenerated) by Computer| where LastHeartbeat < ago(argSpan)"
-          }
-        },
-        {
-          "type": "savedSearches",
-          "apiVersion": "2017-04-26-preview",
-          "name": "Query using function",
-            "dependsOn": [
-              "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
-            ],
-            "properties": {
-              "etag": "*",
-              "displayName": "Unavailable computers",
-              "category": "Samples",
-              "query": "UnavailableComputers(7days)"
           }
         }
       ]

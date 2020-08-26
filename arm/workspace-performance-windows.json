@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
@@ -11,62 +11,96 @@
         "location": {
             "type": "string",
             "metadata": {
-            "description": "Location of the workspace."
+              "description": "Specifies the location in which to create the workspace."
             }
         }
     },
     "resources": [
     {
-        "apiVersion": "2017-03-15-preview",
+        "apiVersion": "2020-08-01",
         "type": "Microsoft.OperationalInsights/workspaces",
         "name": "[parameters('workspaceName')]",
         "location": "[parameters('location')]",
         "resources": [
-          {
-            "apiVersion": "2015-11-01-preview",
-            "type": "datasources",
-            "name": "WindowsPerfMemoryAvailableBytes",
-            "dependsOn": [
-              "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
-            ],
-            "kind": "WindowsPerformanceCounter",
-            "properties": {
-              "objectName": "Memory",
-              "instanceName": "*",
-              "intervalSeconds": 10,
-              "counterName": "Available MBytes "
+            {
+                "type": "datasources",
+                "apiVersion": "2020-08-01",
+                "name": "SyslogKern",
+                "dependsOn": [
+                    "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                ],
+                "kind": "LinuxSyslog",
+                "properties": {
+                    "syslogName": "kern",
+                    "syslogSeverities": [
+                        {
+                            "severity": "emerg"
+                        },
+                        {
+                            "severity": "alert"
+                        },
+                        {
+                            "severity": "crit"
+                        },
+                        {
+                            "severity": "err"
+                        },
+                        {
+                            "severity": "warning"
+                        },
+                        {
+                            "severity": "notice"
+                        },
+                        {
+                            "severity": "info"
+                        },
+                        {
+                            "severity": "debug"
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "datasources",
+                "apiVersion": "2020-08-01",
+                "name": "SyslogDaemon",
+                "dependsOn": [
+                    "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                ],
+                "kind": "LinuxSyslog",
+                "properties": {
+                    "syslogName": "daemon",
+                    "syslogSeverities": [
+                        {
+                            "severity": "emerg"
+                        },
+                        {
+                            "severity": "alert"
+                        },
+                        {
+                            "severity": "crit"
+                        },
+                        {
+                            "severity": "err"
+                        },
+                        {
+                            "severity": "warning"
+                        }
+                    ]
+                }
+            },
+            {
+                "apiVersion": "2020-08-01",
+                "type": "datasources",
+                "name": "SyslogCollection",
+                "dependsOn": [
+                    "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                ],
+                "kind": "LinuxSyslogCollection",
+                "properties": {
+                    "state": "Enabled"
+                }
             }
-          },
-          {
-            "apiVersion": "2015-11-01-preview",
-            "type": "datasources",
-            "name": "WindowsPerfMemoryPercentageBytes",
-            "dependsOn": [
-              "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
-            ],
-            "kind": "WindowsPerformanceCounter",
-            "properties": {
-              "objectName": "Memory",
-              "instanceName": "*",
-              "intervalSeconds": 10,
-              "counterName": "% Committed Bytes in Use"
-            }
-          },
-          {
-            "apiVersion": "2015-11-01-preview",
-            "type": "datasources",
-            "name": "WindowsPerfProcessorPercentage",
-            "dependsOn": [
-              "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
-            ],
-            "kind": "WindowsPerformanceCounter",
-            "properties": {
-              "objectName": "Processor",
-              "instanceName": "_Total",
-              "intervalSeconds": 10,
-              "counterName": "% Processor Time"
-            }
-          }
         ]
       }
     ]

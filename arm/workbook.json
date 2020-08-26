@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workbookDisplayName":  {             
@@ -37,7 +37,7 @@
             "type": "Microsoft.Insights/workbooks",
             "location": "[resourceGroup().location]",
             "kind": "shared",
-            "apiVersion": "2018-06-17-preview",
+            "apiVersion": "2020-08-01",
             "dependsOn": [],
             "properties": {
                 "displayName": "[parameters('workbookDisplayName')]",

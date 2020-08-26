@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "sourceId": {
@@ -28,7 +28,7 @@
         {
             "type":"Microsoft.Insights/scheduledQueryRules",
             "name":"Sample log query alert",
-            "apiVersion": "2018-04-16",
+            "apiVersion": "2020-08-01",
             "location": "[parameters('location')]",
             "properties":{
                 "description": "Sample log query alert",

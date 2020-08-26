@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "alertName": {
@@ -132,7 +132,7 @@
             "name": "[parameters('alertName')]",
             "type": "Microsoft.Insights/metricAlerts",
             "location": "global",
-            "apiVersion": "2018-03-01",
+            "apiVersion": "2020-08-01",
             "tags": {},
             "properties": {
                 "description": "[parameters('alertDescription')]",

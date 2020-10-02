@@ -2,14 +2,14 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-      "vaultName": {
-        "value": "bwarmvault"
+      "virtualMachineName": {
+        "value": "bw-lx-ubu-01"
       },
-      "dbName": {
-        "value": "bw-aem-cosmos"
+      "virtualMachineLocation": {
+        "value": "eastus"
       },
-      "workspaceId": {
-        "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourcegroups/bw-samples-arm/providers/microsoft.operationalinsights/workspaces/bw-arm-01"
+      "virtualMachineOsType": {
+        "value": "linux"
       },
       "storageAccountId": {
         "value": "/subscriptions/4e56605e-4b16-4baa-9358-dbb8d6faedfe/resourceGroups/monitoring/providers/Microsoft.Storage/storageAccounts/bwmonitoringdata"
